@@ -8,7 +8,7 @@ import re
 from scrapy.conf import settings
 import random
 import requests
-from ..passwd_dic.pass_list import pass_list
+from ..Vulnerability_policy_Library.WeakPd.pass_list import pass_list
 
 class Weakpwd_Spider(Spider):
     '''弱口令漏洞检测'''

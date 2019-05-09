@@ -6,9 +6,11 @@
 
 import tkinter as tk
 import tkinter.font as tkFont
-import tkinter.messagebox
 import tkinter.ttk as ttk
-
+# from WebScanner.cmd.WeakpwdSpider import WeakpwdSpider_exec
+import os
+import subprocess
+import time
 
 class MForm(tk.Frame):
     '''继承自Frame类，master为Tk类顶级窗体（带标题栏、最大、最小、关闭按钮）'''
@@ -24,6 +26,8 @@ class MForm(tk.Frame):
     def __init__(self, master=None):
         super().__init__(master)
         self.initComponent(master)
+        self.info = []
+
 
     def initComponent(self, master):
         '''初始化GUI组件'''
@@ -63,7 +67,7 @@ class MForm(tk.Frame):
         #上面Frame帧用于设置目标等
         self.frm_up = ttk.Frame(self.paneUp, relief=tk.SUNKEN, padding=0)
         # Frame帧拉伸东西填充
-        self.frm_up.grid(row=0, column=0)
+        self.frm_up.grid(row=0, column=0,sticky = tk.NSEW)
         # 将Frame帧添加到推拉窗控件，权重1
         self.paneUp.add(self.frm_up)
         self.initSetting()
@@ -83,6 +87,7 @@ class MForm(tk.Frame):
         self.frm_right = ttk.Frame(self.panewin, relief=tk.SUNKEN)  # 右侧Frame帧用于放置视频区域和控制按钮
         self.frm_right.grid(row=0, column=1, sticky=tk.NSEW)  # 右侧Frame帧四个方向拉伸
         self.panewin.add(self.frm_right)# 将右侧Frame帧添加到面板
+        self.initCtrl()#初始化右侧结果显示界面
 
 
     def initMenu(self, master):
@@ -113,27 +118,32 @@ class MForm(tk.Frame):
         #设置目标标签
         tgtLabel = tk.Label(self.frm_up,text=' 目标：').grid(row=0, column=0,sticky = tk.W, padx=3)
         #设置目标填写的文本框
-        tgtEntry = tk.Entry(self.frm_up, bd=3,width=40).grid(row=0, column=1, sticky=tk.W)
+        tgtEntry = tk.Entry(self.frm_up, bd=3,width=40)
+        tgtEntry.grid(row=0, column=1, sticky=tk.W)
         #设置配置标签
         confLabel = tk.Label(self.frm_up,text='配置：').grid(row=0, column=2, sticky=tk.W,padx=3)
         #'设置配置的下拉列表'
         confCombobox = ttk.Combobox(self)
         comvalue = tk.StringVar()  # 窗体自带的文本，新建一个值
         comboxlist = ttk.Combobox(self.frm_up, textvariable=comvalue,state='readonly',width=40)  # 初始化
-        confList = ('综合扫描', 'XSS', 'SQL注入', 'CLRF')
+        confList = ('综合扫描', 'XSS', 'SQL注入', 'CLRF', '弱口令')
         comboxlist["values"] = confList
         comboxlist.current(1)  # 选择第一个
         # comboxlist.bind("<<ComboboxSelected>>", go)  # 绑定事件,(下拉列表框被选中时，绑定go()函数)
         comboxlist.grid(row=0, column=3, sticky=tk.W)
         #添加扫描、取消按钮
-        scanButton = tk.Button(self.frm_up, text='扫描', command="print('hi')").grid(row=0, column=4, sticky=tk.W,padx=6)
-        cancelButton = tk.Button(self.frm_up, text='取消', command="print('hi')").grid(row=0, column=5, sticky=tk.W,padx=6)
-        # #登录配置
-        # loginLabel = tk.Label(self.frm_up,text=' 登录：').grid(row=1, column=0,sticky = tk.W,padx=3)
+        # self.scanButton = tk.Button(self.frm_up, text='扫描', command=lambda:self.WeakpwdSpider_exec(tgtEntry.get()))
+        self.scanButton = tk.Button(self.frm_up, text='扫描', command=lambda:self.WeakpwdSpider_exec(tgtEntry.get()))
+        self.scanButton.grid(row=0, column=4, sticky=tk.W,padx=6)
+        cancelButton = tk.Button(self.frm_up, text='取消', command=lambda:print('hi'))
+        cancelButton.grid(row=0, column=5, sticky=tk.E,padx=6)
+        #登录配置
+        # loginLabel = tk.Labe(self.frm_up,text=' 登录：').grid(row=1, column=0,sticky = tk.W,padx=3)
         #设置命令标签、文本框
         cmdLabel = tk.Label(self.frm_up,text=' 命令：').grid(row=1, column=0,sticky = tk.W,padx=3)
         #设置命令的文本框
-        cmdEntry = tk.Entry(self.frm_up, bd=3,width=105).grid(row=1, column=1, columnspan=5,sticky=tk.W)
+        cmdEntry = tk.Entry(self.frm_up, bd=3,width=105, state='readonly')
+        cmdEntry.grid(row=1, column=1, columnspan=5,sticky=tk.W)
 
 
     def menu_click_event(self):
@@ -146,23 +156,17 @@ class MForm(tk.Frame):
         self.frm_left.rowconfigure(0, weight=1)
         self.frm_left.columnconfigure(0, weight=1)
 
-        #添加一个标签页：网站目录
-        self.tabDir = ttk.Notebook(self.frm_left)
-        self.tabDir.grid(row=0,column=0,sticky=tk.NW)
-        self.tabPage = tk.Frame(self.tabDir)
-        self.tabDir.add(self.tabPage, text='网站目录')
-
-        #添加一个树状视图的目录列表
-        tree = ttk.Treeview(self.tabPage, selectmode='browse', show='tree', padding=[0, 0, 0, 0])
+        # #添加一个树状视图的目录列表
+        tree = ttk.Treeview(self.frm_left, selectmode='browse', show='tree', padding=[0, 0, 0, 0])
         tree.grid(row=0, column=0, sticky=tk.NSEW) # 树状视图填充左侧Frame帧
         tree.column('#0', width=150)# 设置图标列的宽度，视图的宽度由所有列的宽决定
         # 一级节点parent='',index=第几个节点,iid=None则自动生成并返回，text为图标右侧显示文字
         # values值与columns给定的值对应
-        tr_root = tree.insert("", 0, None, open=True, text='播放列表')  # 树视图添加根节点
-        node1 = tree.insert(tr_root, 0, None, open=True, text='本地文件')  # 根节点下添加一级节点
+        tr_root = tree.insert("", 0, None, open=True, text='网站目录')  # 树视图添加根节点
+        node1 = tree.insert(tr_root, 0, None, open=False, text='本地文件')  # 根节点下添加一级节点
         node11 = tree.insert(node1, 0, None, text='文件1')# 添加二级节点
         node12 = tree.insert(node1, 1, None, text='文件2')# 添加二级节点
-        node2 = tree.insert(tr_root, 1, None, open=True, text='网络文件')  # 根节点下添加一级节点
+        node2 = tree.insert(tr_root, 1, None, open=False, text='网络文件')  # 根节点下添加一级节点
         node21 = tree.insert(node2, 0, None, text='文件1')# 添加二级节点
         node22 = tree.insert(node2, 1, None, text='文件2') # 添加二级节点
 
@@ -172,21 +176,55 @@ class MForm(tk.Frame):
         self.frm_right.rowconfigure(0, weight=1)
         self.frm_right.columnconfigure(0, weight=1)
 
-        #添加标签
-        self.tabTop = ttk.Notebook(self.frm_right)
-        self.tabTop.grid(row=0,column=0,sticky=tk.NW)
+        #添加NoteBook并显示
+        self.tabNote = ttk.Notebook(self.frm_right)
+        self.tabNote.grid(row=0, column=0,sticky=tk.NSEW)
 
         # 添加一个标签页：扫描进度
-        self.tabScanPage = tk.Frame(self.tabTop)
-        self.tabTop.add(self.tabScanPage, text='扫描进度')
+        self.tabScanPage = tk.Frame(self.tabNote)
+        self.ScanText = tk.Text(self.tabScanPage)
+        self.ScanText.grid(row=0,column=0,sticky=tk.NSEW)
+        self.tabNote.add(self.tabScanPage, text='扫描进度')
 
         #添加一个标签页：风险视图
-        self.tabResultPage = tk.Frame(self.tabTop)
-        self.tabTop.add(self.tabResultPage, text='风险视图')
+        self.tabViewPage = tk.Frame(self.tabNote,width = 1000)
+        self.ViewText = tk.Text(self.tabViewPage)
+        self.ViewText.grid(row=0,column=0,sticky=tk.NSEW)
+        self.tabNote.add(self.tabViewPage, text='风险视图')
 
         #添加一个标签页：扫描结果
-        self.tabResultPage = tk.Frame(self.tabTop)
-        self.tabTop.add(self.tabResultPage, text='扫描结果')
+        self.tabResultPage = tk.Frame(self.tabNote)
+        self.ResultText = tk.Text(self.tabResultPage)
+        self.ResultText.grid(row=0,column=0,sticky=tk.NSEW)
+        self.tabNote.add(self.tabResultPage, text='扫描结果')
+
+    def WeakpwdSpider_exec(self,url):
+        # 命令行执行WeakpwdSpider，供GUI、CMD调用
+        print(url)
+        self.scanButton.config(state=tk.DISABLED)
+        popen = subprocess.Popen(['scrapy', 'crawl', 'WeakpwdSpider'], stdout=subprocess.PIPE)
+        while True:
+            if popen.stdout.readline() == b'':
+                self.scanButton.config(state=tk.NORMAL)
+                break
+            v = popen.stdout.readline()
+            self.ScanText.insert(tk.END,v)
+            time.sleep(1)
+
+            print(v)
+
+
+    def onGo(self):
+        def counter(i):
+            if i > 0:
+                self.ScanText.insert(tk.END, 'a_' + str(i))
+                self.ScanText.after(1000, counter, i - 1)
+            else:
+                self.scanButton.config(state=tk.NORMAL)
+
+        self.scanButton.config(state=tk.DISABLED)
+        counter(50)
+
 
 if (__name__ == '__main__'):
     root = tk.Tk()
