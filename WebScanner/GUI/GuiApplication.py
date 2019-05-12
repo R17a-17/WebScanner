@@ -100,15 +100,6 @@ class MForm(tk.Frame):
         '''初始化菜单'''
         #在顶级菜单下创建菜单项
         menubar = tk.Menu(self)
-
-        # 在顶级菜单下创建菜单项
-        pmenu = tk.Menu(menubar, tearoff=False)
-        #添加子菜单
-        menubar.add_cascade(label='配置(P)',menu=pmenu)
-        pmenu.add_command(label="打开", command=lambda :self.aboutmenu())
-        pmenu.add_command(label="保存", command=lambda :self.aboutmenu())
-        pmenu.add_separator()# 添加分割线
-        pmenu.add_command(label="退出", command=lambda :master.quit())
         # 在顶级菜单下创建菜单项:帮助
         hmenu =tk.Menu (menubar, tearoff=False)
         menubar.add_cascade(label='帮助(H)', menu=hmenu)  # 添加子菜单
@@ -189,22 +180,24 @@ class MForm(tk.Frame):
         self.tabNote.grid(row=0, column=0,sticky=tk.NSEW)
 
         # 添加一个标签页：扫描进度
-        self.tabScanPage = tk.Frame(self.tabNote)
+        self.tabScanPage = tk.Frame(self.tabNote,)
+        self.tabScanPage.rowconfigure(0, weight=1)
+        self.tabScanPage.columnconfigure(0, weight=1)
+        self.tabScanPage.rowconfigure(1, weight=2)
+        self.tabScanPage.columnconfigure(1, weight=1)
+        self.tabNote.add(self.tabScanPage, text='扫描结果')
+
         self.ScanText = tk.Text(self.tabScanPage)
         self.ScanText.grid(row=0,column=0,sticky=tk.NSEW)
-        self.tabNote.add(self.tabScanPage, text='扫描进度')
+        self.ScanText1 = tk.Text(self.tabScanPage)
+        self.ScanText1.grid(row=0,column=1,sticky=tk.NSEW)
+        self.ScanText2 = tk.Text(self.tabScanPage)
+        self.ScanText2.grid(row=1,column=0,rowspan=5,sticky=tk.NSEW)
+        self.ScanText3 = tk.Text(self.tabScanPage)
+        self.ScanText3.grid(row=1,column=1,sticky=tk.NSEW)
 
-        #添加一个标签页：风险视图
-        self.tabViewPage = tk.Frame(self.tabNote,width = 1000)
-        self.ViewText = tk.Text(self.tabViewPage)
-        self.ViewText.grid(row=0,column=0,sticky=tk.NSEW)
-        self.tabNote.add(self.tabViewPage, text='风险视图')
 
-        #添加一个标签页：扫描结果
-        self.tabResultPage = tk.Frame(self.tabNote)
-        self.ResultText = tk.Text(self.tabResultPage)
-        self.ResultText.grid(row=0,column=0,sticky=tk.NSEW)
-        self.tabNote.add(self.tabResultPage, text='扫描结果')
+
 
     def aboutmenu(self):
         '''菜单事件'''
@@ -240,22 +233,7 @@ class MForm(tk.Frame):
 
     def insertTreeNode(self):
         '''向网站列表插入子节点生成树'''
-        list = [{'file1': 'catalogue', 'file2': 'set-me-free_988', 'file3': 'index.html', 'file4': None, 'file5': None, 'file6': None}, {'file1': 'catalogue', 'file2': 'shakespeares-sonnets_989', 'file3': 'index.html', 'file4': None, 'file5': None, 'file6': None}, {'file1': 'catalogue', 'file2': 'starving-hearts-triangular-trade-trilogy-1_990', 'file3': 'index.html', 'file4': None, 'file5': None, 'file6': None}]
-        for fileset in list:
-            if fileset['file1'] != None:
-                # 根节点下添加一级节点,是本层第0个节点，默认状态为关闭，名称为fileset['file1']
-                node1 = self.tree.insert(self.tr_root, 0, None, open=False, text=fileset['file1'])
-                if fileset['file2'] != None:
-                    # 第二节点下添加一级节点,是本层第0个节点，默认状态为关闭，名称为fileset['file2']
-                    node2 = self.tree.insert(node1, 0, None, open=False, text=fileset['file2'])
-                    if fileset['file3'] != None:
-                        # 第二节点下添加一级节点,是本层第0个节点，默认状态为关闭，名称为fileset['file3']
-                        node3 = self.tree.insert(node2, 0, None, open=False, text=fileset['file3'])
-                        print(node3)
-                        if fileset['file4'] != None:
-                            # 第二节点下添加一级节点,是本层第0个节点，默认状态为关闭，名称为fileset['file4']
-                            node4 = self.tree.insert(node3, 0, None, open=False, text=fileset['file4'])
-                            print(node4)
+
 
 
 if (__name__ == '__main__'):

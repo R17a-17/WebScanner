@@ -48,3 +48,12 @@ button_start = Button(top, text='开始', fg='#F5F5F5', bg='#7A7A7A', command=ru
 button_start.place(relx=0.45, rely=0.5, anchor=CENTER)
 
 top.mainloop()
+
+self.ScanProcess = tk.Frame(self.tabScanPage)
+self.ScanProcess.grid(row=0, column=0, sticky=tk.NSEW)
+self.ScanHistogram = tk.Frame(self.tabScanPage)
+self.ScanHistogram.grid(row=0, column=1, sticky=tk.NSEW)
+self.ScanResultList = tk.Frame(self.tabScanPage)
+self.ScanResultList.grid(row=1, column=0, rowspan=5, sticky=tk.NSEW)
+self.ScanPieChart = tk.Frame(self.tabScanPage)
+self.ScanPieChart.grid(row=1, column=1, sticky=tk.NSEW)
