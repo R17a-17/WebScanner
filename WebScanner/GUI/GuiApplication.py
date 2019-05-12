@@ -1,16 +1,17 @@
 # --Created by WD
 # python 3.6
 # coding:utf-8
-# !/usr/bin/env python3
-# coding:utf-8
 
 import tkinter as tk
 import tkinter.font as tkFont
 import tkinter.ttk as ttk
-# from WebScanner.cmd.WeakpwdSpider import WeakpwdSpider_exec
+from tkinter import messagebox
+from WebScanner.cmd import WeakpwdSpider
 import os
 import subprocess
 import time
+from WebScanner.GUI import Verify
+from WebScanner.GUI import sitefile_tree
 
 class MForm(tk.Frame):
     '''继承自Frame类，master为Tk类顶级窗体（带标题栏、最大、最小、关闭按钮）'''
@@ -23,10 +24,15 @@ class MForm(tk.Frame):
     title = 'Web Vulnerability Scanner'
     iconPath = '../img/tkicon.ico'
 
+
     def __init__(self, master=None):
         super().__init__(master)
         self.initComponent(master)
         self.info = []
+        # 大小不可变（最大化按钮不可用）
+        root.resizable(False, False)
+        self.cmd = ''
+
 
 
     def initComponent(self, master):
@@ -57,7 +63,7 @@ class MForm(tk.Frame):
         self.paneTop.grid(row=0, column=0, sticky=tk.NSEW)  # 向四个方向拉伸填满MWindow帧
         #面板的第一行和第二行权重为1:9
         self.paneTop.rowconfigure(0,weight=1)
-        self.paneTop.rowconfigure(1, weight=20)
+        self.paneTop.rowconfigure(1, weight=10)
         #面板第一列权重为1
         self.paneTop.columnconfigure(0,weight=1)
 
@@ -79,12 +85,12 @@ class MForm(tk.Frame):
         self.panewin.columnconfigure(0,weight=1)
         self.panewin.columnconfigure(1,weight=1)
 
-        self.frm_left = ttk.Frame(self.panewin, relief=tk.SUNKEN, padding=0)  # 左侧Frame帧用于放置播放列表
+        self.frm_left = ttk.Frame(self.panewin, relief=tk.SUNKEN, padding=0)  # 左侧Frame帧用于放置网站目录
         self.frm_left.grid(row=0, column=0, sticky=tk.NS)  # 左侧Frame帧拉伸填充
         self.panewin.add(self.frm_left) # 将左侧Frame帧添加到推拉窗控件，左侧权重1
         self.initDirList()  # 添加网站目录树状视图
 
-        self.frm_right = ttk.Frame(self.panewin, relief=tk.SUNKEN)  # 右侧Frame帧用于放置视频区域和控制按钮
+        self.frm_right = ttk.Frame(self.panewin, relief=tk.SUNKEN)  # 右侧Frame帧用于放置扫描结果
         self.frm_right.grid(row=0, column=1, sticky=tk.NSEW)  # 右侧Frame帧四个方向拉伸
         self.panewin.add(self.frm_right)# 将右侧Frame帧添加到面板
         self.initCtrl()#初始化右侧结果显示界面
@@ -95,19 +101,19 @@ class MForm(tk.Frame):
         #在顶级菜单下创建菜单项
         menubar = tk.Menu(self)
 
-        # 在顶级菜单下创建菜单项:配置
+        # 在顶级菜单下创建菜单项
         pmenu = tk.Menu(menubar, tearoff=False)
         #添加子菜单
         menubar.add_cascade(label='配置(P)',menu=pmenu)
-        pmenu.add_command(label="打开", command=self.menu_click_event)
-        pmenu.add_command(label="保存", command=self.menu_click_event)
+        pmenu.add_command(label="打开", command=lambda :self.aboutmenu())
+        pmenu.add_command(label="保存", command=lambda :self.aboutmenu())
         pmenu.add_separator()# 添加分割线
-        pmenu.add_command(label="退出", command=master.quit())
+        pmenu.add_command(label="退出", command=lambda :master.quit())
         # 在顶级菜单下创建菜单项:帮助
         hmenu =tk.Menu (menubar, tearoff=False)
         menubar.add_cascade(label='帮助(H)', menu=hmenu)  # 添加子菜单
-        hmenu.add_command(label="关于", command=self.menu_click_event)
-        hmenu.add_command(label="作者", command=self.menu_click_event)
+        hmenu.add_command(label="使用方法", command=lambda :self.usemenu())
+        hmenu.add_command(label="关于", command=lambda :self.aboutmenu())
         self.master['menu'] = menubar
 
     def initSetting(self):
@@ -118,37 +124,39 @@ class MForm(tk.Frame):
         #设置目标标签
         tgtLabel = tk.Label(self.frm_up,text=' 目标：').grid(row=0, column=0,sticky = tk.W, padx=3)
         #设置目标填写的文本框
-        tgtEntry = tk.Entry(self.frm_up, bd=3,width=40)
-        tgtEntry.grid(row=0, column=1, sticky=tk.W)
+        tgt = tk.StringVar()
+        tgt.set('')
+        self.tgtEntry = tk.Entry(self.frm_up, bd=3,width=40, textvariable = tgt)
+        self.tgtEntry.grid(row=0, column=1, sticky=tk.W)
+
         #设置配置标签
         confLabel = tk.Label(self.frm_up,text='配置：').grid(row=0, column=2, sticky=tk.W,padx=3)
         #'设置配置的下拉列表'
-        confCombobox = ttk.Combobox(self)
         comvalue = tk.StringVar()  # 窗体自带的文本，新建一个值
-        comboxlist = ttk.Combobox(self.frm_up, textvariable=comvalue,state='readonly',width=40)  # 初始化
-        confList = ('综合扫描', 'XSS', 'SQL注入', 'CLRF', '弱口令')
-        comboxlist["values"] = confList
-        comboxlist.current(1)  # 选择第一个
-        # comboxlist.bind("<<ComboboxSelected>>", go)  # 绑定事件,(下拉列表框被选中时，绑定go()函数)
-        comboxlist.grid(row=0, column=3, sticky=tk.W)
+        self.comboxlist = ttk.Combobox(self.frm_up, textvariable=comvalue, state='readonly', width=40)  # 初始化
+        # confList = ('综合扫描', 'XSS', 'SQL注入', 'CLRF', '弱口令')
+        # self.comboxlist["values"] = confList
+        self.comboxlist["value"] = ('综合扫描', 'XSS', 'SQL注入', 'CRLF', '弱口令')
+        self.comboxlist.current(newindex=0)  # 选择第一个
+        # self.comboxlist.bind("<<ComboboxSelected>>", self.combox)  # 绑定事件,(下拉列表框被选中时，绑定响应函数)
+        self.comboxlist.grid(row=0, column=3, sticky=tk.W)
+
         #添加扫描、取消按钮
-        # self.scanButton = tk.Button(self.frm_up, text='扫描', command=lambda:self.WeakpwdSpider_exec(tgtEntry.get()))
-        self.scanButton = tk.Button(self.frm_up, text='扫描', command=lambda:self.WeakpwdSpider_exec(tgtEntry.get()))
+        self.scanButton = tk.Button(self.frm_up, text='扫描', command=lambda:self.insertTreeNode())
         self.scanButton.grid(row=0, column=4, sticky=tk.W,padx=6)
         cancelButton = tk.Button(self.frm_up, text='取消', command=lambda:print('hi'))
         cancelButton.grid(row=0, column=5, sticky=tk.E,padx=6)
         #登录配置
         # loginLabel = tk.Labe(self.frm_up,text=' 登录：').grid(row=1, column=0,sticky = tk.W,padx=3)
+
         #设置命令标签、文本框
         cmdLabel = tk.Label(self.frm_up,text=' 命令：').grid(row=1, column=0,sticky = tk.W,padx=3)
         #设置命令的文本框
-        cmdEntry = tk.Entry(self.frm_up, bd=3,width=105, state='readonly')
-        cmdEntry.grid(row=1, column=1, columnspan=5,sticky=tk.W)
+        self.cmdvalue = tk.StringVar()
+        self.cmdvalue.set('1')
+        self.cmdEntry = tk.Entry(self.frm_up, bd=3,width=105, state='readonly', textvariable = self.cmdvalue)
+        self.cmdEntry.grid(row=1, column=1, columnspan=5,sticky=tk.W)
 
-
-    def menu_click_event(self):
-        '''菜单事件'''
-        pass
 
     def initDirList(self):
         '''初始化目录树状视图'''
@@ -157,18 +165,18 @@ class MForm(tk.Frame):
         self.frm_left.columnconfigure(0, weight=1)
 
         # #添加一个树状视图的目录列表
-        tree = ttk.Treeview(self.frm_left, selectmode='browse', show='tree', padding=[0, 0, 0, 0])
-        tree.grid(row=0, column=0, sticky=tk.NSEW) # 树状视图填充左侧Frame帧
-        tree.column('#0', width=150)# 设置图标列的宽度，视图的宽度由所有列的宽决定
+        self.tree = ttk.Treeview(self.frm_left, selectmode='browse', show='tree', padding=[0, 0, 0, 0])
+        self.tree.grid(row=0, column=0, sticky=tk.NSEW) # 树状视图填充左侧Frame帧
+        self.tree.column('#0', width=150)# 设置图标列的宽度，视图的宽度由所有列的宽决定
         # 一级节点parent='',index=第几个节点,iid=None则自动生成并返回，text为图标右侧显示文字
         # values值与columns给定的值对应
-        tr_root = tree.insert("", 0, None, open=True, text='网站目录')  # 树视图添加根节点
-        node1 = tree.insert(tr_root, 0, None, open=False, text='本地文件')  # 根节点下添加一级节点
-        node11 = tree.insert(node1, 0, None, text='文件1')# 添加二级节点
-        node12 = tree.insert(node1, 1, None, text='文件2')# 添加二级节点
-        node2 = tree.insert(tr_root, 1, None, open=False, text='网络文件')  # 根节点下添加一级节点
-        node21 = tree.insert(node2, 0, None, text='文件1')# 添加二级节点
-        node22 = tree.insert(node2, 1, None, text='文件2') # 添加二级节点
+        self.tr_root = self.tree.insert("", 0, None, open=True, text='网站目录')  # 树视图添加根节点
+        node1 = self.tree.insert(self.tr_root, 0, None, open=False, text='本地文件')  # 根节点下添加一级节点
+        node11 = self.tree.insert(node1, 0, None, text='文件1')# 添加二级节点
+        node12 = self.tree.insert(node1, 1, None, text='文件2')# 添加二级节点
+        node2 = self.tree.insert(self.tr_root, 1, None, open=False, text='网络文件')  # 根节点下添加一级节点
+        node21 = self.tree.insert(node2, 0, None, text='文件1')# 添加二级节点
+        node22 = self.tree.insert(node2, 1, None, text='文件2') # 添加二级节点
 
 
     def initCtrl(self):
@@ -198,32 +206,56 @@ class MForm(tk.Frame):
         self.ResultText.grid(row=0,column=0,sticky=tk.NSEW)
         self.tabNote.add(self.tabResultPage, text='扫描结果')
 
-    def WeakpwdSpider_exec(self,url):
+    def aboutmenu(self):
+        '''菜单事件'''
+        messagebox.showinfo(title='关于WebScanner',message = '版本号：V1.0，作者：吴丹\n\r用于扫描目标网站是否存在XSS、SQLi、暴力破解等漏洞')
+
+    def usemenu(self):
+        messagebox.showinfo(title='使用方法', message= 'WebScanner提供两种使用方法：命令行和交界面\n\r在使用交互界面时，请正确输入目标网站的url和扫描方法！')
+
+
+    def WeakpwdSpider_exec(self):
         # 命令行执行WeakpwdSpider，供GUI、CMD调用
-        print(url)
         self.scanButton.config(state=tk.DISABLED)
-        popen = subprocess.Popen(['scrapy', 'crawl', 'WeakpwdSpider'], stdout=subprocess.PIPE)
-        while True:
-            if popen.stdout.readline() == b'':
-                self.scanButton.config(state=tk.NORMAL)
-                break
-            v = popen.stdout.readline()
-            self.ScanText.insert(tk.END,v)
-            time.sleep(1)
+        cmd = ''
+        if Verify.Verify_tgt(self.tgtEntry.get()):
+            messagebox.showwarning(title='警告',message='输入的目标url无效！请重新输入')
+            self.scanButton.config(state=tk.NORMAL)
+        else:
+            if self.comboxlist.get() == 'XSS':
+                cmd = 'scrapy crawl XssSpider'
+            elif self.comboxlist.get() == 'SQL 注入':
+                cmd = 'scrapy crawl SqliSpider'
+            elif self.comboxlist.get() == 'CRLF':
+                cmd = 'scrapy crawl CRLF'
+            elif self.comboxlist.get() == '弱口令':
+                cmd = 'scrapy crawl WeakpwdSpider'
+            elif self.comboxlist.get() == '综合扫描':
+                cmd = 'scrapy crawl VulndetectSpider'
+            self.cmdvalue.set(cmd + ' -a start_url='+ self.tgtEntry.get())
+        print(cmd)
+        popen = subprocess.Popen('scrapy crawl LinkSpider -a start_url='+ self.tgtEntry.get(), stdout=subprocess.PIPE)
+        popen = subprocess.Popen(cmd, stdout=subprocess.PIPE)
 
-            print(v)
 
-
-    def onGo(self):
-        def counter(i):
-            if i > 0:
-                self.ScanText.insert(tk.END, 'a_' + str(i))
-                self.ScanText.after(1000, counter, i - 1)
-            else:
-                self.scanButton.config(state=tk.NORMAL)
-
-        self.scanButton.config(state=tk.DISABLED)
-        counter(50)
+    def insertTreeNode(self):
+        '''向网站列表插入子节点生成树'''
+        list = [{'file1': 'catalogue', 'file2': 'set-me-free_988', 'file3': 'index.html', 'file4': None, 'file5': None, 'file6': None}, {'file1': 'catalogue', 'file2': 'shakespeares-sonnets_989', 'file3': 'index.html', 'file4': None, 'file5': None, 'file6': None}, {'file1': 'catalogue', 'file2': 'starving-hearts-triangular-trade-trilogy-1_990', 'file3': 'index.html', 'file4': None, 'file5': None, 'file6': None}]
+        for fileset in list:
+            if fileset['file1'] != None:
+                # 根节点下添加一级节点,是本层第0个节点，默认状态为关闭，名称为fileset['file1']
+                node1 = self.tree.insert(self.tr_root, 0, None, open=False, text=fileset['file1'])
+                if fileset['file2'] != None:
+                    # 第二节点下添加一级节点,是本层第0个节点，默认状态为关闭，名称为fileset['file2']
+                    node2 = self.tree.insert(node1, 0, None, open=False, text=fileset['file2'])
+                    if fileset['file3'] != None:
+                        # 第二节点下添加一级节点,是本层第0个节点，默认状态为关闭，名称为fileset['file3']
+                        node3 = self.tree.insert(node2, 0, None, open=False, text=fileset['file3'])
+                        print(node3)
+                        if fileset['file4'] != None:
+                            # 第二节点下添加一级节点,是本层第0个节点，默认状态为关闭，名称为fileset['file4']
+                            node4 = self.tree.insert(node3, 0, None, open=False, text=fileset['file4'])
+                            print(node4)
 
 
 if (__name__ == '__main__'):

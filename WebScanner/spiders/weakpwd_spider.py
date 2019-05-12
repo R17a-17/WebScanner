@@ -21,11 +21,11 @@ class Weakpwd_Spider(Spider):
         self.username = None
         self.password = None
         self.pass_list = pass_list
-        print(self.pass_list)
 
     def start_requests(self):
         '''重写starturl的请求'''
         # 开始url
+        print('>>>WebScanner正在扫描弱口令漏洞...')
         self.start_urls = []
         self.start_urls.append(self.url)
         yield Request(self.start_urls[0], callback=self.parse)
@@ -43,7 +43,6 @@ class Weakpwd_Spider(Spider):
             formlist[4]:self.password,
             formlist[6]:formlist[7],
         }
-        print(formdata)
         return FormRequest.from_response(
             response,
             method = 'POST',
@@ -56,12 +55,11 @@ class Weakpwd_Spider(Spider):
     def after_login(self, response):
         '''check login succeed before going on'''
         if response.url == self.start_urls[0]:
-            print(r'登录失败！')
+            print(r'>>>登录失败')
             self.passth = self.passth + 1
             yield Request(self.start_urls[0], callback=self.parse, dont_filter = True)
         else:
-            print('登录成功')
-            print('用户名:', self.username, ',密码:', self.password)
+            print('>>>登录成功!!!用户名:', self.username, ',密码:', self.password)
         return
 
 
@@ -80,7 +78,6 @@ class Weakpwd_Spider(Spider):
             if 'username' in form.group() or 'password' in form.group() or 'pass' in form.group() or 'pwd' in form.group() or 'accout' in form.group():
                 tgtform = form.group()
 
-        print(tgtform)
         #匹配form里面的所有参数和值
         parameter_list = []
         for p in re.finditer(r'(?P<parameter>[\w]+)="(?P<value>[^ ]+)"( |>)', tgtform):
@@ -94,7 +91,6 @@ class Weakpwd_Spider(Spider):
 
         #匹配input里面的所有参数和值
         for q in re.finditer(r'<input( )+(((?P<parameter>[\w]*)="(?P<value>[^ ]+)"( )?))+>', form.group()):
-            print(q)
             if 'name="username"' in q.group():
                 username_parameter = 'username'
                 username_value = q.group('value')

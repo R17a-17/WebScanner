@@ -7,10 +7,7 @@ from scrapy.linkextractors import LinkExtractor
 from urllib.parse import urlparse
 from ..items_link import LinkItem
 from pymysql import *
-# import scrapy
-# from scrapy.crawler import CrawlerProcess
-# import sys,os
-# sys.path.append(os.path.dirname(__file__) + os.sep + '../')
+
 
 class LinkSpider(Spider):
     '''根据指定的目标爬取网站的所有链接'''
@@ -34,7 +31,7 @@ class LinkSpider(Spider):
     def __init__(self, *args, **kwargs):
         super(LinkSpider, self).__init__(*args, **kwargs)
         #命令行指定start_url
-        self.start_urls =  [kwargs.get('start_url')];
+        self.start_urls =  [kwargs.get('start_url')]
         self.allow_domain.append(urlparse(self.start_urls[0]).netloc)
 
 
@@ -73,10 +70,3 @@ class LinkSpider(Spider):
         except:
             nextlink = None
         return nextlink
-
-
-# process = CrawlerProcess({
-#     'USER_AGENT': 'Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 5.1)'
-# })
-# process.crawl(LinkSpider)
-# process.start() # the script will block here until the crawling is finished

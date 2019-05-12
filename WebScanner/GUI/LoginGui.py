@@ -31,6 +31,11 @@ class Application_ui(Frame):
         self.tabScanPage = Frame(self.tabNote)
         self.Tab1Lbl = Label(self.tabScanPage, text='Please add widgets in code.')
         self.Tab1Lbl.grid(row=0,column=0,sticky=NW)
+        e = StringVar
+        self.Tab1Entry1 =Entry(self.tabScanPage,textvariable = e)
+        e.set('hhh')
+        self.Tab1Entry1.grid(row=0,column=1,sticky=NW)
+
         self.tabNote.add(self.tabScanPage, text='扫描进度')
 
         #添加一个标签页：风险视图
