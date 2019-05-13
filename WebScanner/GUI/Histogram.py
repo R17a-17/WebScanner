@@ -29,13 +29,17 @@ class Histogram:
 
     def create_matplotlib(self):
         # 创建绘图对象f
-        f = plt.figure(num=2, figsize=(7, 2), dpi=80, facecolor="WhiteSmoke", edgecolor='green', frameon=True)
+        #使用num避免同时出现两张图时无法正常显示
+        f = plt.figure(num=2, figsize=(5, 4), dpi=80, facecolor="WhiteSmoke", edgecolor='green', frameon=True)
         # 创建一副子图
         # fig1 = plt.subplot(1, 1, 1)
 
         maxvalue = max(self.data)
         height = max(self.data)
-        span = maxvalue/5
+        if maxvalue == 0:
+            span = 0
+        else:
+            span = maxvalue/5
 
         # 设置每根柱子的颜色
         colors = ['forestgreen', 'mediumblue', 'gold', 'r', 'maroon']
@@ -51,8 +55,10 @@ class Histogram:
         # 添加横纵坐标的刻度
         labels = [u'信息', u'低危', u'中危', u'高危', u'紧急']
         plt.xticks(range(len(labels)), labels)
-        plt.yticks(np.arange(0, int(height), int(span)))
-
+        try:
+            plt.yticks(np.arange(0, int(height), int(span)))
+        except ZeroDivisionError as e:
+            plt.yticks(np.arange(0, 0, 1))
         return f
 
     def create_form(self, figure):
@@ -61,7 +67,7 @@ class Histogram:
         self.canvas1.draw()  # 以前的版本使用show()方法，matplotlib 2.2之后不再推荐show（）用draw代替，但是用show不会报错，会显示警告
         self.canvas1.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=1)
 
-        # 把matplotlib绘制图形的导航工具栏显示到tkinter窗口上
+        # # 把matplotlib绘制图形的导航工具栏显示到tkinter窗口上
         # toolbar = NavigationToolbar2Tk(self.canvas1,
         #                                self.root)  # matplotlib 2.2版本之后推荐使用NavigationToolbar2Tk，若使用NavigationToolbar2TkAgg会警告
         # toolbar.update()
@@ -74,5 +80,5 @@ if __name__ == "__main__":
     root = tk.Tk()
     frame = tk.Frame(root)
     frame.pack()
-    main(frame,(20,40,60,10,4))
+    main(frame,(0,0,0,0,0))
     root.mainloop()

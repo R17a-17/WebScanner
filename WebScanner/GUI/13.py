@@ -2,7 +2,10 @@
 #python 3.6
 #coding:utf-8
 
-# 本脚本用于制作各等级漏洞统计柱状图
+import time
+import threading
+from tkinter import *
+
 
 
 def set_ch():
@@ -45,6 +48,8 @@ def make_plotjpg():
 
     plt.show()
     plt.close()
+
+
 
 
 def main():

@@ -2,27 +2,28 @@
 # python 3.6
 # coding:utf-8
 
+#————————————————————————
+#外部包导入
 import tkinter as tk
 import tkinter.font as tkFont
 import tkinter.ttk as ttk
 from tkinter import messagebox
-from WebScanner.cmd import WeakpwdSpider
-import os
 import subprocess
-import time
+#-----------------------------------------------
+#内部包导入
+from WebScanner.cmd import WeakpwdSpider
 from WebScanner.GUI import Verify
 from WebScanner.GUI import SiteFileTree
 from WebScanner.GUI import Histogram
 from WebScanner.GUI import PieChart
+from WebScanner.GUI import Processbar
+#--------------------------------------------------
 
 class MForm(tk.Frame):
     '''继承自Frame类，master为Tk类顶级窗体（带标题栏、最大、最小、关闭按钮）'''
 
-    bgColor = 'black'  #背景色:黑色
-    widgetColor = 'DarkMagenta' # 控件字体颜色：深洋红
-    fontColor = 'DarkGreen'  # 内容字体颜色：暗绿色
-    width = 810 #窗口宽度
-    height = 670 #窗口高度
+    width = 800 #窗口宽度
+    height = 680 #窗口高度
     title = 'Web Vulnerability Scanner'
     iconPath = '../img/tkicon.ico'
 
@@ -115,7 +116,7 @@ class MForm(tk.Frame):
         self.frm_up.rowconfigure(1, weight=1)# 左侧Frame帧第二行权重配置以便子元素填充布局                  
 
         #设置目标标签
-        tgtLabel = tk.Label(self.frm_up,text=' 目标：').grid(row=0, column=0,sticky = tk.W, padx=3)
+        tgtLabel = tk.Label(self.frm_up,text=' 目标：').grid(row=0, column=0,sticky = tk.NSEW, padx=3, pady=3)
         #设置目标填写的文本框
         tgt = tk.StringVar()
         tgt.set('')
@@ -123,7 +124,7 @@ class MForm(tk.Frame):
         self.tgtEntry.grid(row=0, column=1, sticky=tk.W)
 
         #设置配置标签
-        confLabel = tk.Label(self.frm_up,text='配置：').grid(row=0, column=2, sticky=tk.W,padx=3)
+        confLabel = tk.Label(self.frm_up,text='配置：').grid(row=0, column=2, sticky=tk.W,padx=3,pady=3)
         #'设置配置的下拉列表'
         comvalue = tk.StringVar()  # 窗体自带的文本，新建一个值
         self.comboxlist = ttk.Combobox(self.frm_up, textvariable=comvalue, state='readonly', width=40)  # 初始化
@@ -135,10 +136,11 @@ class MForm(tk.Frame):
         self.comboxlist.grid(row=0, column=3, sticky=tk.W)
 
         #添加扫描、取消按钮
-        self.scanButton = tk.Button(self.frm_up, text='扫描', command=lambda:self.insertTreeNode())
-        self.scanButton.grid(row=0, column=4, sticky=tk.W,padx=6)
-        cancelButton = tk.Button(self.frm_up, text='取消', command=lambda:print('hi'))
-        cancelButton.grid(row=0, column=5, sticky=tk.E,padx=6)
+        self.scanButton = tk.Button(self.frm_up, text='扫描', command=lambda:self.detect_exec())
+        self.scanButton.grid(row=0, column=4, sticky=tk.W,padx=6,pady=6)
+        self.cancelButton = tk.Button(self.frm_up, text='取消', command=lambda:print('hi'))
+        self.cancelButton.grid(row=0, column=5, sticky=tk.E,padx=6,pady=6)
+        self.cancelButton.config(state=tk.DISABLED)
         #登录配置
         # loginLabel = tk.Labe(self.frm_up,text=' 登录：').grid(row=1, column=0,sticky = tk.W,padx=3)
 
@@ -146,7 +148,7 @@ class MForm(tk.Frame):
         cmdLabel = tk.Label(self.frm_up,text=' 命令：').grid(row=1, column=0,sticky = tk.W,padx=3)
         #设置命令的文本框
         self.cmdvalue = tk.StringVar()
-        self.cmdvalue.set('1')
+        self.cmdvalue.set('')
         self.cmdEntry = tk.Entry(self.frm_up, bd=3,width=105, state='readonly', textvariable = self.cmdvalue)
         self.cmdEntry.grid(row=1, column=1, columnspan=5,sticky=tk.W)
 
@@ -162,14 +164,14 @@ class MForm(tk.Frame):
         self.FileNote.grid(row=0, column=0,sticky=tk.NSEW)
 
         # 添加一个标签页：网站目录
-        self.tabFilePage = tk.Frame(self.FileNote,)
+        self.tabFilePage = tk.Frame(self.FileNote,bg="WhiteSmoke")
         self.tabFilePage.rowconfigure(0, weight=1)
         self.tabFilePage.columnconfigure(0, weight=1)
         self.FileNote.add(self.tabFilePage, text='网站目录')
 
         # #添加一个树状视图的目录列表
         self.tree = ttk.Treeview(self.tabFilePage, selectmode='browse', show='tree', padding=[0, 0, 0, 0])
-        self.tree.grid(row=0, column=0, sticky=tk.NSEW) # 树状视图填充左侧Frame帧
+        self.tree.grid(row=0, column=0, sticky=tk.NSEW,padx=10,pady=10) # 树状视图填充左侧Frame帧
         self.tree.column('#0', width=150)# 设置图标列的宽度，视图的宽度由所有列的宽决定
         # 一级节点parent='',index=第几个节点,iid=None则自动生成并返回，text为图标右侧显示文字
         # values值与columns给定的值对应
@@ -188,31 +190,33 @@ class MForm(tk.Frame):
         self.tabNote = ttk.Notebook(self.frm_right)
         self.tabNote.grid(row=0, column=0,sticky=tk.NSEW)
 
-        # 添加一个标签页：扫描进度
-        self.tabScanPage = tk.Frame(self.tabNote,)
+        # 添加一个标签页：扫描结果
+        self.tabScanPage = ttk.Frame(self.tabNote,)
         self.tabScanPage.rowconfigure(0, weight=1)
         self.tabScanPage.columnconfigure(0, weight=1)
-        self.tabScanPage.rowconfigure(1, weight=2)
+        self.tabScanPage.rowconfigure(1, weight=1)
         self.tabScanPage.columnconfigure(1, weight=1)
         self.tabNote.add(self.tabScanPage, text='扫描结果')
 
-        self.ScanText = tk.Text(self.tabScanPage)
-        self.ScanText.grid(row=0,column=0,sticky=tk.NSEW)
+        #添加result列表
+        self.ScanResultlist = tk.Frame(self.tabScanPage,bg='WhiteSmoke')
+        self.ScanResultlist.rowconfigure(0, weight=1)
+        self.ScanResultlist.columnconfigure(0, weight=1)
+        self.ScanResultlist.grid(row=0, column=0, rowspan=2,sticky=tk.NSEW)
+        # self.ScanProcessbar = Processbar.main(self.ScanResultlist)
 
-        #添加柱状图部分
-        self.ScanHistogram = tk.Frame(self.tabScanPage)
-        self.ScanHistogram.grid(row=0, column=1, sticky=tk.NSEW)
-        self.Histogram =Histogram.main(self.ScanHistogram,(1,2,5,8,3))
+        # 创建一个纵向滚动的滚动条,打包到窗口右侧，铺满Y方向
 
-        self.ScanText2 = tk.Text(self.tabScanPage)
-        self.ScanText2.grid(row=1,column=0,sticky=tk.NSEW)
-        # self.ScanText3 = tk.Text(self.tabScanPage)
-        # self.ScanText3.grid(row=1,column=1,sticky=tk.NSEW)
+        self.Resultlist = tk.Text(self.ScanResultlist,bg='white')
+        self.Resultlist.grid(row=0,column=0,sticky=tk.NSEW,padx=10,pady=10)
 
-        #添加饼图部分
-        self.ScanPieChart= tk.Frame(self.tabScanPage)
-        self.ScanPieChart.grid(row=1, column=1, sticky=tk.NSEW)
-        self.PieChart = PieChart.main(self.ScanPieChart,[20,10,40,30])
+        #添加图像显示
+        self.ScanGraphView = ttk.Frame(self.tabScanPage)
+        self.ScanGraphView.grid(row=0, column=1, sticky=tk.NSEW)
+        #添加柱状图部分初始显示所有的漏洞都是0
+        self.Histogram = Histogram.main(self.ScanGraphView,(0,0,0,0,0))
+        #添加饼图部分,初始显示每种类型漏洞都为0，所以比例都一样
+        self.PieChart = PieChart.main(self.ScanGraphView,[25,25,25,25])
 
 
 
@@ -225,13 +229,12 @@ class MForm(tk.Frame):
         messagebox.showinfo(title='使用方法', message= 'WebScanner提供两种使用方法：命令行和交界面\n\r在使用交互界面时，请正确输入目标网站的url和扫描方法！')
 
 
-    def WeakpwdSpider_exec(self):
+    def detect_exec(self):
         # 命令行执行WeakpwdSpider，供GUI、CMD调用
         self.scanButton.config(state=tk.DISABLED)
         cmd = ''
         if Verify.Verify_tgt(self.tgtEntry.get()):
             messagebox.showwarning(title='警告',message='输入的目标url无效！请重新输入')
-            self.scanButton.config(state=tk.NORMAL)
         else:
             if self.comboxlist.get() == 'XSS':
                 cmd = 'scrapy crawl XssSpider'
@@ -244,9 +247,24 @@ class MForm(tk.Frame):
             elif self.comboxlist.get() == '综合扫描':
                 cmd = 'scrapy crawl VulndetectSpider'
             self.cmdvalue.set(cmd + ' -a start_url='+ self.tgtEntry.get())
-        print(cmd)
-        popen = subprocess.Popen('scrapy crawl LinkSpider -a start_url='+ self.tgtEntry.get(), stdout=subprocess.PIPE)
-        popen = subprocess.Popen(cmd, stdout=subprocess.PIPE)
+            print(cmd)
+
+            if cmd == 'scrapy crawl WeakpwdSpider':
+                print(cmd)
+                popen = subprocess.Popen(cmd, stdout=subprocess.PIPE)
+                popen1 = subprocess.Popen('scrapy crawl LinkSpider -a start_url=' + self.tgtEntry.get(),
+                                         stdout=subprocess.PIPE)
+            else:
+                print('scrapy crawl WeakpwdSpider')
+                popen = subprocess.Popen('scrapy crawl WeakpwdSpider', stdout=subprocess.PIPE)
+                print('scrapy crawl LinkSpider -a start_url=' + self.tgtEntry.get())
+                popen1 = subprocess.Popen('scrapy crawl LinkSpider -a start_url=' + self.tgtEntry.get(),
+                                         stdout=subprocess.PIPE)
+                print(cmd)
+                popen2 = subprocess.Popen(cmd, stdout=subprocess.PIPE)
+
+            self.insertTreeNode()
+        self.scanButton.config(state=tk.DISABLED)
 
 
     def insertTreeNode(self):

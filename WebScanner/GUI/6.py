@@ -22,7 +22,7 @@ class Progress(object):
         self.button.grid(row = 0,column = 0,padx = 5)
 
         # 创建一个背景色为白色的矩形
-        self.canvas = Canvas(self.root,width = 170,height = 26,bg = "white")
+        self.canvas = Canvas(self.root,bg = "white")
         # 创建一个矩形外边框（距离左边，距离顶部，矩形宽度，矩形高度），线型宽度，颜色
         self.out_line = self.canvas.create_rectangle(2,2,180,27,width = 1,outline = "black")
         self.canvas.grid(row = 0,column = 1,ipadx = 5)

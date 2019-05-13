@@ -30,7 +30,7 @@ class PieChart:
 
     def create_matplotlib(self):
         # 创建绘图对象f
-        f = plt.figure(num=1, figsize=(7, 3), dpi=80, facecolor="WhiteSmoke", edgecolor='green', frameon=True)
+        f = plt.figure(num=1, figsize=(6, 4), dpi=80, facecolor="WhiteSmoke", edgecolor='green', frameon=True)
         # 创建一副子图
         # fig1 = plt.subplot(1, 1, 1)
 
@@ -55,7 +55,7 @@ class PieChart:
 
         nums = [1, 50, 29, 20]
 
-        label = ['XSS', 'SQLI', 'CRLF', 'Weak Password']
+        label = ['XSS', 'SQLI', 'CRLF', 'WeakPwd']
         color = ['red', 'green', 'yellow', 'purple']
 
         indic = []
