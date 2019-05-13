@@ -36,7 +36,7 @@ canvas._tkcanvas.pack(side=tkinter.TOP,  # get_tk_widget()得到的就是_tkcanv
 def on_key_event(event):
     """键盘事件处理"""
     print("你按了%s" % event.key)
-    key_press_handler(event, canvas, toolbar)
+    # key_press_handler(event, canvas, toolbar)
 
 
 # 绑定上面定义的键盘事件处理函数

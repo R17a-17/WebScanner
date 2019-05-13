@@ -11,7 +11,9 @@ import os
 import subprocess
 import time
 from WebScanner.GUI import Verify
-from WebScanner.GUI import sitefile_tree
+from WebScanner.GUI import SiteFileTree
+from WebScanner.GUI import Histogram
+from WebScanner.GUI import PieChart
 
 class MForm(tk.Frame):
     '''继承自Frame类，master为Tk类顶级窗体（带标题栏、最大、最小、关闭按钮）'''
@@ -155,19 +157,26 @@ class MForm(tk.Frame):
         self.frm_left.rowconfigure(0, weight=1)
         self.frm_left.columnconfigure(0, weight=1)
 
+        #添加NoteBook并显示
+        self.FileNote = ttk.Notebook(self.frm_left)
+        self.FileNote.grid(row=0, column=0,sticky=tk.NSEW)
+
+        # 添加一个标签页：网站目录
+        self.tabFilePage = tk.Frame(self.FileNote,)
+        self.tabFilePage.rowconfigure(0, weight=1)
+        self.tabFilePage.columnconfigure(0, weight=1)
+        self.FileNote.add(self.tabFilePage, text='网站目录')
+
         # #添加一个树状视图的目录列表
-        self.tree = ttk.Treeview(self.frm_left, selectmode='browse', show='tree', padding=[0, 0, 0, 0])
+        self.tree = ttk.Treeview(self.tabFilePage, selectmode='browse', show='tree', padding=[0, 0, 0, 0])
         self.tree.grid(row=0, column=0, sticky=tk.NSEW) # 树状视图填充左侧Frame帧
         self.tree.column('#0', width=150)# 设置图标列的宽度，视图的宽度由所有列的宽决定
         # 一级节点parent='',index=第几个节点,iid=None则自动生成并返回，text为图标右侧显示文字
         # values值与columns给定的值对应
-        self.tr_root = self.tree.insert("", 0, None, open=True, text='网站目录')  # 树视图添加根节点
-        node1 = self.tree.insert(self.tr_root, 0, None, open=False, text='本地文件')  # 根节点下添加一级节点
-        node11 = self.tree.insert(node1, 0, None, text='文件1')# 添加二级节点
-        node12 = self.tree.insert(node1, 1, None, text='文件2')# 添加二级节点
-        node2 = self.tree.insert(self.tr_root, 1, None, open=False, text='网络文件')  # 根节点下添加一级节点
-        node21 = self.tree.insert(node2, 0, None, text='文件1')# 添加二级节点
-        node22 = self.tree.insert(node2, 1, None, text='文件2') # 添加二级节点
+        # self.tr_root = self.tree.insert("", 0, '网站目录', open=True, text='网站目录')  # 树视图添加根节点
+        # node1 = self.tree.insert(self.tr_root, 0, None, open=False, text='本地文件')  # 根节点下添加一级节点
+        # node11 = self.tree.insert(node1, 0, None, text='文件1')# 添加二级节点
+        # node12 = self.tree.insert(node1, 1, None, text='文件2')# 添加二级节点
 
 
     def initCtrl(self):
@@ -189,12 +198,21 @@ class MForm(tk.Frame):
 
         self.ScanText = tk.Text(self.tabScanPage)
         self.ScanText.grid(row=0,column=0,sticky=tk.NSEW)
-        self.ScanText1 = tk.Text(self.tabScanPage)
-        self.ScanText1.grid(row=0,column=1,sticky=tk.NSEW)
+
+        #添加柱状图部分
+        self.ScanHistogram = tk.Frame(self.tabScanPage)
+        self.ScanHistogram.grid(row=0, column=1, sticky=tk.NSEW)
+        self.Histogram =Histogram.main(self.ScanHistogram,(1,2,5,8,3))
+
         self.ScanText2 = tk.Text(self.tabScanPage)
-        self.ScanText2.grid(row=1,column=0,rowspan=5,sticky=tk.NSEW)
-        self.ScanText3 = tk.Text(self.tabScanPage)
-        self.ScanText3.grid(row=1,column=1,sticky=tk.NSEW)
+        self.ScanText2.grid(row=1,column=0,sticky=tk.NSEW)
+        # self.ScanText3 = tk.Text(self.tabScanPage)
+        # self.ScanText3.grid(row=1,column=1,sticky=tk.NSEW)
+
+        #添加饼图部分
+        self.ScanPieChart= tk.Frame(self.tabScanPage)
+        self.ScanPieChart.grid(row=1, column=1, sticky=tk.NSEW)
+        self.PieChart = PieChart.main(self.ScanPieChart,[20,10,40,30])
 
 
 
@@ -233,6 +251,9 @@ class MForm(tk.Frame):
 
     def insertTreeNode(self):
         '''向网站列表插入子节点生成树'''
+        SiteFileTree.main(self.tree)
+        #需要重新部署否则不会充满左侧Frame
+        self.tree.grid(row=0, column=0, sticky=tk.NSEW)
 
 
 

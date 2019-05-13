@@ -6,27 +6,25 @@
 
 import matplotlib.pyplot as plt
 from matplotlib.font_manager import FontProperties
-font = FontProperties(fname=r"C:\Windows\Fonts\simhei.ttf", size=14)
+font = FontProperties('FangSong', size=14)
 
-beijing = [17,17,23,43]
-shanghai = ['19%','4%','23%','54%']
-guangzhou = ['53%','25%','13%','9%']
-shenzhen = ['41%','22%','20%','17%']
 
-label = ['2-3 years','3-4 years','4-5 years','5+ years']
+nums = [1,50,29,20]
+
+label = ['XSS','SQLI','CRLF','Weak Password']
 color = ['red','green','yellow','purple']
 
 indic = []
 
 #我们将数据最大的突出显示
-for value in beijing:
-    if value == max(beijing):
+for value in nums:
+    if value == max(nums):
         indic.append(0.1)
     else:
         indic.append(0)
 
 plt.pie(
-    beijing,
+    nums,
     labels=label,
     colors=color,
     startangle=90,
@@ -36,6 +34,6 @@ plt.pie(
 )
 
 
-plt.title(u'饼图示例——统计北京程序员工龄', FontProperties=font)
+plt.title(u'饼图—统计各类型漏洞所占比例', FontProperties=font)
 
 plt.show()

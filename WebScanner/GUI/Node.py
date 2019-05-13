@@ -1,24 +1,33 @@
-#--Created by WD
-#python 3.6
-#coding:utf-8
+# --Created by WD
+# python 3.6
+# coding:utf-8
 
 class TreeNode(object):
     """The basic node of tree structure"""
 
     def __contains__(self, item):
         return item in self.child
+
     def __init__(self, name, parent=None):
         super(TreeNode, self).__init__()
         self.name = name
         self.parent = parent
         self.child = {}
 
-    def __repr__(self) :
+    def __repr__(self):
         return 'TreeNode(%s)' % self.name
 
     def get_child(self, name, defval=None):
         """get a child node of current node"""
         return self.child.get(name, defval)
+
+    @property
+    def path(self):
+        """return path string (from root to current node)"""
+        if self.parent:
+            return '%s %s' % (self.parent.path.strip(), self.name)
+        else:
+            return self.name
 
     def add_child(self, name, obj=None):
         """add a child node to current node"""
@@ -61,3 +70,11 @@ class TreeNode(object):
                 break
             cur = obj
         return obj
+
+    def __len__(self):
+        """return number of children node"""
+        return len(self.child)
+
+    def __bool__(self, item):
+        """always return True for exist node"""
+        return True

@@ -20,11 +20,6 @@ def make_plotjpg():
     import numpy as np
 
     set_ch()  # 设置中文正常显示
-
-    # 从键盘输入列表
-    # data = input('请输入漏洞个数，按照从漏洞级别从低到高（以逗号隔开）:')
-    # height = input(u'请输入柱状图纵坐标高度：')
-    # span = input(u'请输入柱状图纵坐标间隔：')
     data = (1,2,4,6,7)
     height = 8
     span = 2
