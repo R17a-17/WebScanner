@@ -9,6 +9,9 @@ import tkinter.font as tkFont
 import tkinter.ttk as ttk
 from tkinter import messagebox
 import subprocess
+import time
+import os
+from scrapy import cmdline
 #-----------------------------------------------
 #内部包导入
 from WebScanner.cmd import WeakpwdSpider
@@ -17,6 +20,7 @@ from WebScanner.GUI import SiteFileTree
 from WebScanner.GUI import Histogram
 from WebScanner.GUI import PieChart
 from WebScanner.GUI import Processbar
+from WebScanner.spiders import weakpwd_spider
 #--------------------------------------------------
 
 class MForm(tk.Frame):
@@ -205,7 +209,6 @@ class MForm(tk.Frame):
         self.ScanResultlist.grid(row=0, column=0, rowspan=2,sticky=tk.NSEW)
         # self.ScanProcessbar = Processbar.main(self.ScanResultlist)
 
-        # 创建一个纵向滚动的滚动条,打包到窗口右侧，铺满Y方向
 
         self.Resultlist = tk.Text(self.ScanResultlist,bg='white')
         self.Resultlist.grid(row=0,column=0,sticky=tk.NSEW,padx=10,pady=10)
@@ -236,9 +239,10 @@ class MForm(tk.Frame):
         if Verify.Verify_tgt(self.tgtEntry.get()):
             messagebox.showwarning(title='警告',message='输入的目标url无效！请重新输入')
         else:
+            self.Resultlist.insert(tk.END, "开启WebScanner...\n")
             if self.comboxlist.get() == 'XSS':
                 cmd = 'scrapy crawl XssSpider'
-            elif self.comboxlist.get() == 'SQL 注入':
+            elif self.comboxlist.get() == 'SQL注入':
                 cmd = 'scrapy crawl SqliSpider'
             elif self.comboxlist.get() == 'CRLF':
                 cmd = 'scrapy crawl CRLF'
@@ -249,22 +253,20 @@ class MForm(tk.Frame):
             self.cmdvalue.set(cmd + ' -a start_url='+ self.tgtEntry.get())
             print(cmd)
 
+            self.Resultlist.insert(tk.END, "正在进行弱口令探测...\n")
             if cmd == 'scrapy crawl WeakpwdSpider':
-                print(cmd)
-                popen = subprocess.Popen(cmd, stdout=subprocess.PIPE)
-                popen1 = subprocess.Popen('scrapy crawl LinkSpider -a start_url=' + self.tgtEntry.get(),
-                                         stdout=subprocess.PIPE)
+                popen = subprocess.Popen('scrapy crawl WeakpwdSpider -a start_url=http://192.168.177.161/dvwa/login.php', stdout=subprocess.PIPE)
+                popen.communicate()
+                # popen = subprocess.Popen(cmd+' -a start_url=' + self.tgtEntry.get(), stdout=subprocess.PIPE)
+                # popen1 = subprocess.Popen('scrapy crawl LinkSpider -a start_url=' + self.tgtEntry.get(), stdout=subprocess.PIPE)
+                # popen1.communicate()
             else:
-                print('scrapy crawl WeakpwdSpider')
-                popen = subprocess.Popen('scrapy crawl WeakpwdSpider', stdout=subprocess.PIPE)
-                print('scrapy crawl LinkSpider -a start_url=' + self.tgtEntry.get())
-                popen1 = subprocess.Popen('scrapy crawl LinkSpider -a start_url=' + self.tgtEntry.get(),
-                                         stdout=subprocess.PIPE)
-                print(cmd)
-                popen2 = subprocess.Popen(cmd, stdout=subprocess.PIPE)
+                popen = subprocess.Popen('scrapy crawl WeakpwdSpider -a start_url=' + self.tgtEntry.get(), stdout=subprocess.PIPE)
+                # popen1 = subprocess.Popen('scrapy crawl LinkSpider -a start_url=' + self.tgtEntry.get(), stdout=subprocess.PIPE)
+                # popen2 = subprocess.Popen(cmd, stdout=subprocess.PIPE)
 
-            self.insertTreeNode()
-        self.scanButton.config(state=tk.DISABLED)
+            # self.insertTreeNode()
+        self.scanButton.config(state=tk.NORMAL)
 
 
     def insertTreeNode(self):

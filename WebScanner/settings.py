@@ -94,10 +94,7 @@ ROBOTSTXT_OBEY = True
 PASSWORD_TXT = 'pass_top1000.txt'
 
 
-# Disable cookies (enabled by default)
-COOKIES = {'security': 'low', 'security_level': '0', 'PHPSESSID': 'fec0034048ea796a86a3a551d8673eea'}
-COOKIES_ENABLED = True
-COOKIES_DEBUG = True
+
 
 #DB config
 MYSQL_DB_NAME = 'webscanner'
@@ -108,4 +105,12 @@ MYSQL_PORT = '3306'
 ITEM_PIPELINES = {
     'WebScanner.pipelines_mysqldb_linktable.MySQLAsyncPipeline':400,
 }
+
+# Disable cookies (enabled by default)
+# COOKIES_ENABLED = True
+# COOKIES_DEBUG = True
+
+#请使用用户名密码登录后获取到cookie，并在{ }里面写上cookie，
+# 比如COOKIES = {'security': 'low', 'security_level': '0', 'PHPSESSID': 'fec0034048ea796a86a3a551d8673eea'}
+COOKIES = {'security':'low','security_level':'0', 'PHPSESSID':'28d4c49639aeb9bfce9c506569736a1b'}
 

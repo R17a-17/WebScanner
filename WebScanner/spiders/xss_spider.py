@@ -81,9 +81,6 @@ class XssSpider(Spider):
 
     def parse(self, response):
         '''处理请求数据并继续下条url'''
-        print('#########################')
-        print(response.body)
-        print('#########################')
         #是否存在可测试的参数
         if self.detect_code:
             if self.xss_response_check(response.body):

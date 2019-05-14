@@ -1,27 +1,28 @@
-#--Created by WD
-#python 3.6
-#coding:utf-8
+# --Created by WD
+# python 3.6
+# coding:utf-8
 
 from scrapy import *
 from scrapy.linkextractors import LinkExtractor
 from urllib.parse import urlparse
 from ..items_link import LinkItem
 from pymysql import *
+from scrapy.conf import settings
 
 
 class LinkSpider(Spider):
     '''根据指定的目标爬取网站的所有链接'''
 
-    #给爬虫命名
+    # 给爬虫命名
     name = 'LinkSpider'
-    #指定爬取的开始链接
+    # 指定爬取的开始链接
     # start_urls = ["http://books.toscrape.com/"]
-    #获取目标的域名
+    # 获取目标的域名
     allow_domain = []
     # allow_domain.append(urlparse(start_urls[0]).netloc)
-    #爬取最大限制数
+    # 爬取最大限制数
     max_crawl = 3000
-    #爬取的行数，即爬取到第几个链接
+    # 爬取的行数，即爬取到第几个链接
     linkth = 1
 
     # 将得到的Connection对象和Cursor对象分别赋值给self.db_conn和self.db_cur，以便之后使用。
@@ -30,21 +31,27 @@ class LinkSpider(Spider):
 
     def __init__(self, *args, **kwargs):
         super(LinkSpider, self).__init__(*args, **kwargs)
-        #命令行指定start_url
-        self.start_urls =  [kwargs.get('start_url')]
+        # 命令行指定start_url
+        self.start_urls = [kwargs.get('start_url')]
         self.allow_domain.append(urlparse(self.start_urls[0]).netloc)
 
+    def start_requests(self):
+        '''重写starturl的请求'''
+
+        # 设置cookie便于访问登录后的页面
+        self.cookie = settings['COOKIES']
+        yield Request(self.start_urls[0], callback=self.parse, cookies=self.cookie)
 
     def parse(self, response):
-        #连接数据库
+        # 连接数据库
         # db = conn.connsql()
-        #使用cursor()方法获取操作游标
+        # 使用cursor()方法获取操作游标
         # cursor = db.cursor()
 
-        #提取开始链接的页面中 所有属于目标域的URL
-        links = LinkExtractor(allow_domains = self.allow_domain).extract_links(response)
+        # 提取开始链接的页面中 所有属于目标域的URL
+        links = LinkExtractor(allow_domains=self.allow_domain).extract_links(response)
 
-        #将提取的链接插入数据库
+        # 将提取的链接插入数据库
         for link in links:
             linkitem = LinkItem()
             linkitem['link'] = link.url
@@ -55,9 +62,9 @@ class LinkSpider(Spider):
 
         if next_url and self.linkth < self.max_crawl:
             self.linkth = self.linkth + 1
-            print(self.linkth )
-            #如果找到下一页的URL，构造新的Request 对象
-            yield Request(next_url, callback=self.parse)
+            print(self.linkth)
+            # 如果找到下一页的URL，构造新的Request 对象
+            yield Request(next_url, callback=self.parse, cookies=self.cookie)
         else:
             self.db_conn.close()
 

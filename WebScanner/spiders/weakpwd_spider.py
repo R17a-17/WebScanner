@@ -5,18 +5,23 @@
 from scrapy import *
 from pymysql import *
 import re
-from scrapy.conf import settings
 import random
 import requests
-from ..Vulnerability_policy_Library.WeakPd.pass_list import pass_list
+import json
+from WebScanner.Vulnerability_policy_Library.WeakPd.pass_list import pass_list
+from scrapy.crawler import CrawlerProcess
+import scrapy.cmdline
 
 class Weakpwd_Spider(Spider):
     '''弱口令漏洞检测'''
 
     name = 'WeakpwdSpider'
 
-    def __init__(self):
-        self.url = 'http://192.168.177.161/dvwa/login.php'
+    def __init__(self, *args, **kwargs):
+        super(Weakpwd_Spider, self).__init__(*args, **kwargs)
+        #命令行指定start_url
+        self.start_urls =  [kwargs.get('start_url')]
+        self.url = self.start_urls[0]
         self.passth = 0
         self.username = None
         self.password = None
@@ -44,12 +49,14 @@ class Weakpwd_Spider(Spider):
             formlist[4]:self.password,
             formlist[6]:formlist[7],
         }
+        self.formdata = formdata
         return FormRequest.from_response(
             response,
             method = 'POST',
             formdata= formdata,
             callback=self.after_login,
             dont_filter=True,#由于暴力破解针对同一个url，这里一定要设置，否则重复链接不会进行下一步爬取
+            meta={'cookiejar': True}
         )
 
 
@@ -61,7 +68,21 @@ class Weakpwd_Spider(Spider):
             yield Request(self.start_urls[0], callback=self.parse, dont_filter = True)
         else:
             print('>>>登录成功!!!用户名:', self.username, ',密码:', self.password)
-            print('COOKIE:', response.request.headers.getlist('Cookie'))
+            string = 'username：' + self.username + ' password:'+self.password
+            # # dumps 将数据转换成字符串
+            # json_str = json.dumps(self.formdata)
+            # print(json_str)
+            # print(type(json_str))
+            # 将得到的Connection对象和Cursor对象分别赋值给self.db_conn和self.db_cur，以便之后使用。
+            db_conn = connect(host='localhost', port=3306, db='webscanner', user='root', passwd='toor', charset='utf8')
+            db_cur = db_conn.cursor()
+            sql = 'INSERT INTO t_login_tmp(string) VALUES (%s)'
+            # sql = 'INSERT INTO t_link_tmp(link) SELECT %s FROM DUAL WHERE NOT EXISTS(SELECT link from t_link_tmp where link = %s)'
+            db_cur.execute(sql,string)
+            db_conn.commit()
+            db_conn.close()
+
+
         return
 
 
@@ -107,3 +128,14 @@ class Weakpwd_Spider(Spider):
 
         return action, method, username_parameter,username_value, password_parameter,password_value, loginbutton_parameter,loginbutton_value
 
+def main(url):
+    process = CrawlerProcess({
+        'USER_AGENT': 'Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 5.1)'
+    })
+    process.crawl(Weakpwd_Spider,start_url=url)
+    process.start() # the script will block here until the crawling is finished
+    # scrapy.cmdline.execute(('scrapy crawl WeakpwdSpider -a start_url='+url[0]).split())  # 这就是我们在命令行中的代码
+
+if __name__ == '__main__':
+    pass
+    # main(url)

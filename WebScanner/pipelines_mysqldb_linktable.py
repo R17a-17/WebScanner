@@ -25,6 +25,7 @@ class MySQLAsyncPipeline:
         user = spider.settings.get('MYSQL_USER')
         passwd = spider.settings.get('MYSQL_PASSWORD')
         self.dbpool = adbapi.ConnectionPool('pymysql', host=host, db=db, user=user, passwd=passwd, charset='utf8')
+        self.id = 1
 
     def close_spider(self, spider):
         self.dbpool.close()
@@ -43,6 +44,10 @@ class MySQLAsyncPipeline:
         values = (
             item['link'],
         )
-        sql = 'INSERT INTO t_link_tmp(link) VALUES (%s)'
+        sql = 'INSERT INTO t_link_tmp(id,link) VALUES (%s,%s)'
         # sql = 'INSERT INTO t_link_tmp(link) SELECT %s FROM DUAL WHERE NOT EXISTS(SELECT link from t_link_tmp where link = %s)'
-        tx.execute(sql, values)
+        try:
+            tx.execute(sql,(self.id,values))
+            self.id = self.id + 1
+        except:
+            pass
