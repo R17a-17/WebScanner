@@ -10,6 +10,7 @@ from scrapy.conf import settings
 from scrapy.http import Response
 import datetime
 import requests
+from WebScanner.item_sqli import SqliItem
 
 #SQL error parttern
 SQLI_ERRORS = {
@@ -76,6 +77,9 @@ class SqliSpider(Spider):
                     print(r'存在sqli漏洞:报错注入,数据库：', list[1])
                     self.linkth = self.linkth + 1
                     self.level = 1
+                    sqliitem = SqliItem()
+                    sqliitem['vulnurl'] = self.url
+                    yield sqliitem
                 else:
                     self.level = 2.1
             if self.level == 2.1:

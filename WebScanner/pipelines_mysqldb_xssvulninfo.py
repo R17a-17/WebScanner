@@ -9,7 +9,7 @@
 
 from twisted.enterprise import adbapi
 import pymysql
-from .items_xss import XssItem
+from WebScanner.items_xss import XssItem
 
 class MySQLAsyncPipeline:
     '''处理linkitem的链接，将所有爬取到的链接插入数据库'''
@@ -42,10 +42,10 @@ class MySQLAsyncPipeline:
     def insert_db(self, tx, item):
         '''将item插入数据库的具体操作'''
         values = (
-            'XSS',
             item['vulnurl'],
+            'XSS',
         )
-        sql = 'INSERT INTO t_vulninfo(vulnurl, vulntype) VALUES (%s,%s)'
+        sql = 'INSERT INTO t_vulninfo(vulnurl, vulntype) VALUES (%s)'
         # sql = 'INSERT INTO t_link_tmp(link) SELECT %s FROM DUAL WHERE NOT EXISTS(SELECT link from t_link_tmp where link = %s)'
         try:
             tx.execute(sql,values)

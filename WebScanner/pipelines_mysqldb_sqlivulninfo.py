@@ -9,7 +9,7 @@
 
 from twisted.enterprise import adbapi
 import pymysql
-from .items_link import LinkItem
+from WebScanner.items_xss import XssItem
 
 class MySQLAsyncPipeline:
     '''处理linkitem的链接，将所有爬取到的链接插入数据库'''
@@ -25,6 +25,7 @@ class MySQLAsyncPipeline:
         user = spider.settings.get('MYSQL_USER')
         passwd = spider.settings.get('MYSQL_PASSWORD')
         self.dbpool = adbapi.ConnectionPool('pymysql', host=host, db=db, user=user, passwd=passwd, charset='utf8')
+        self.id = 1
 
     def close_spider(self, spider):
         self.dbpool.close()
@@ -41,11 +42,14 @@ class MySQLAsyncPipeline:
     def insert_db(self, tx, item):
         '''将item插入数据库的具体操作'''
         values = (
-            item['link'],
+            item['vulnurl'],
+            'SQLI',
         )
-        sql = 'INSERT INTO t_link_tmp(link) VALUES (%s)'
+        sql = 'INSERT INTO t_vulninfo(vulnurl, vulntype) VALUES (%s)'
         # sql = 'INSERT INTO t_link_tmp(link) SELECT %s FROM DUAL WHERE NOT EXISTS(SELECT link from t_link_tmp where link = %s)'
         try:
-            tx.execute(sql, values)
+            print('NNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN')
+            tx.execute(sql,values)
+            print('YYYYYYYYYYYYYYYYYYYYYYYYYYYY')
         except:
             pass

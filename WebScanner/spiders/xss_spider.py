@@ -1,3 +1,5 @@
+
+
 #--Created by WD
 #python 3.6
 #coding:utf-8
@@ -7,6 +9,7 @@ from pymysql import *
 import re
 import random
 from scrapy.conf import settings
+from WebScanner.items_xss import XssItem
 
 
 #XSS:javascript开始符号
@@ -45,7 +48,7 @@ HTMLTAG_XSS_START = [
 ]
 
 HTMLTAG_XSS_END = [
-    "</video>", "</audio>", "</img>" "</a>", "</iframe>"
+    "</video>", "</audio>", "</img>" ,"</a>", "</iframe>"
 ]
 
 
@@ -85,6 +88,9 @@ class XssSpider(Spider):
         if self.detect_code:
             if self.xss_response_check(response.body):
                 self.linkth = self.linkth + 1
+                xssitem = XssItem()
+                xssitem['vulnurl'] = self.url
+                yield xssitem
                 if self.level == 1:
                     print(r'存在xss漏洞:JavaScript窗口注入')
                 elif self.level == 2:

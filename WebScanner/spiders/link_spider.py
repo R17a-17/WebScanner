@@ -49,7 +49,9 @@ class LinkSpider(Spider):
         # cursor = db.cursor()
 
         # 提取开始链接的页面中 所有属于目标域的URL
-        links = LinkExtractor(allow_domains=self.allow_domain).extract_links(response)
+        deny_parttern = '.+(delete|remove|stop|undeploy|reload|restart|' \
+                        'logout|signout|logoff|signoff|exit|quit|byebye|bye-bye|clearuser|invalidate).+'
+        links = LinkExtractor(allow_domains=self.allow_domain, deny=deny_parttern).extract_links(response)
 
         # 将提取的链接插入数据库
         for link in links:
