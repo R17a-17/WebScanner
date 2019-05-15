@@ -11,7 +11,7 @@ from twisted.enterprise import adbapi
 import pymysql
 from WebScanner.items_xss import XssItem
 
-class MySQLAsyncPipeline:
+class XssPipeline:
     '''处理linkitem的链接，将所有爬取到的链接插入数据库'''
     def open_spider(self, spider):
         ''' adbapi.ConnectionPool方法可以创建一个数据库连接池对象，其中包含多个连接对象，
@@ -43,11 +43,13 @@ class MySQLAsyncPipeline:
         '''将item插入数据库的具体操作'''
         values = (
             item['vulnurl'],
-            'XSS',
+            item['vulntype'],
         )
-        sql = 'INSERT INTO t_vulninfo(vulnurl, vulntype) VALUES (%s)'
+        print('##############################################')
+        sql = 'INSERT INTO t_vulninfo(vulnurl, vulntype) VALUES (%s,%s)'
         # sql = 'INSERT INTO t_link_tmp(link) SELECT %s FROM DUAL WHERE NOT EXISTS(SELECT link from t_link_tmp where link = %s)'
         try:
             tx.execute(sql,values)
+            print('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%')
         except:
             pass

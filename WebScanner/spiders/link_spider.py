@@ -15,6 +15,10 @@ class LinkSpider(Spider):
 
     # 给爬虫命名
     name = 'LinkSpider'
+    # 为每个spider指定对应的pipelines
+    custom_settings = {
+        'ITEM_PIPELINES': {'WebScanner.pipelines_mysqldb_linktable.LinkPipeline': 300}
+    }
     # 指定爬取的开始链接
     # start_urls = ["http://books.toscrape.com/"]
     # 获取目标的域名
@@ -34,6 +38,7 @@ class LinkSpider(Spider):
         # 命令行指定start_url
         self.start_urls = [kwargs.get('start_url')]
         self.allow_domain.append(urlparse(self.start_urls[0]).netloc)
+
 
     def start_requests(self):
         '''重写starturl的请求'''

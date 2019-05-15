@@ -68,7 +68,8 @@ class Weakpwd_Spider(Spider):
             yield Request(self.start_urls[0], callback=self.parse, dont_filter = True)
         else:
             print('>>>登录成功!!!用户名:', self.username, ',密码:', self.password)
-            string = 'username：' + self.username + ' password:'+self.password
+            string = 'Weak Password:the username is ' + self.username + 'and the password:'+self.password
+            print(string)
             # # dumps 将数据转换成字符串
             # json_str = json.dumps(self.formdata)
             # print(json_str)
@@ -76,9 +77,13 @@ class Weakpwd_Spider(Spider):
             # 将得到的Connection对象和Cursor对象分别赋值给self.db_conn和self.db_cur，以便之后使用。
             db_conn = connect(host='localhost', port=3306, db='webscanner', user='root', passwd='toor', charset='utf8')
             db_cur = db_conn.cursor()
-            sql = 'INSERT INTO t_login_tmp(string) VALUES (%s)'
+            values = (
+                self.start_urls[0],
+                string
+            )
+            sql = 'INSERT INTO t_vulninfo(vulnurl, vulntype) VALUES (%s,%s)'
             # sql = 'INSERT INTO t_link_tmp(link) SELECT %s FROM DUAL WHERE NOT EXISTS(SELECT link from t_link_tmp where link = %s)'
-            db_cur.execute(sql,string)
+            db_cur.execute(sql,values)
             db_conn.commit()
             db_conn.close()
 

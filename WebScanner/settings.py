@@ -93,6 +93,12 @@ ROBOTSTXT_OBEY = True
 #默认为passwd_dic目录下的pass_top1000文件
 PASSWORD_TXT = 'pass_top1000.txt'
 
+#pipelinse设置
+ITEM_PIPELINES = {
+    'WebScanner.pipelines_mysqldb_linktable.LinkPipeline':400,
+    'WebScanner.pipelines_mysqldb_xssvulninfo.XssPipeline':500,
+    'WebScanner.pipelines_mysqldb_sqlivulninfo.SqliPipeline': 600,
+}
 
 
 
@@ -102,9 +108,7 @@ MYSQL_HOST = 'localhost'
 MYSQL_USER = 'root'
 MYSQL_PASSWORD = 'toor'
 MYSQL_PORT = '3306'
-ITEM_PIPELINES = {
-    'WebScanner.pipelines_mysqldb_linktable.MySQLAsyncPipeline':400,
-}
+
 
 # Disable cookies (enabled by default)
 # COOKIES_ENABLED = True

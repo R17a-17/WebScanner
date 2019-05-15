@@ -14,3 +14,4 @@ from scrapy import Item, Field
 class SqliItem(Item):
     '''define the fields for your item'''
     vulnurl = Field()#存在漏洞的link
+    vulntype = Field()

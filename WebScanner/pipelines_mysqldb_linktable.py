@@ -9,9 +9,9 @@
 
 from twisted.enterprise import adbapi
 import pymysql
-from .items_link import LinkItem
+from WebScanner.items_link import LinkItem
 
-class MySQLAsyncPipeline:
+class LinkPipeline:
     '''处理linkitem的链接，将所有爬取到的链接插入数据库'''
     def open_spider(self, spider):
         ''' adbapi.ConnectionPool方法可以创建一个数据库连接池对象，其中包含多个连接对象，
@@ -40,12 +40,14 @@ class MySQLAsyncPipeline:
 
     def insert_db(self, tx, item):
         '''将item插入数据库的具体操作'''
+        print('!!!!!!!!!!!!!!!!!!!!!!!!')
         values = (
             item['link'],
         )
         sql = 'INSERT INTO t_link_tmp(link) VALUES (%s)'
         # sql = 'INSERT INTO t_link_tmp(link) SELECT %s FROM DUAL WHERE NOT EXISTS(SELECT link from t_link_tmp where link = %s)'
         try:
+            print('SSSSSSSSSSSSSSSSSSSSSSSSSSSS')
             tx.execute(sql, values)
         except:
             pass

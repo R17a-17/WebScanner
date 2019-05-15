@@ -11,36 +11,16 @@ from scrapy.http import Response
 import datetime
 import requests
 from WebScanner.item_sqli import SqliItem
-
-#SQL error parttern
-SQLI_ERRORS = {
-    "MySQL": (r"SQL syntax.*MySQL", r"Warning.*mysql_.*", r"MySQL Query fail.*", r"SQL syntax.*MariaDB server"),
-    "PostgreSQL": (r"PostgreSQL.*ERROR", r"Warning.*\Wpg_.*", r"Warning.*PostgreSQL"),
-    "Microsoft SQL Server": (r"OLE DB.* SQL Server", r"(\W|\A)SQL Server.*Driver", r"Warning.*odbc_.*", r"Warning.*mssql_", r"Msg \d+, Level \d+, State \d+", r"Unclosed quotation mark after the character string", r"Microsoft OLE DB Provider for ODBC Drivers"),
-    "Microsoft Access": (r"Microsoft Access Driver", r"Access Database Engine", r"Microsoft JET Database Engine", r".*Syntax error.*query expression"),
-    "Oracle": (r"\bORA-[0-9][0-9][0-9][0-9]", r"Oracle error", r"Warning.*oci_.*", "Microsoft OLE DB Provider for Oracle"),
-    "IBM DB2": (r"CLI Driver.*DB2", r"DB2 SQL error"),
-    "SQLite": (r"SQLite/JDBCDriver", r"System.Data.SQLite.SQLiteException"),
-    "Informix": (r"Warning.*ibase_.*", r"com.informix.jdbc"),
-    "Sybase": (r"Warning.*sybase.*", r"Sybase message")
-}
-
-#引起报错注入的一些符号
-SQLI_ERROR_PAYLOADS = [
-    #"'", "')", "';", '"', '")', '";', '`', '`)', '`;', '\\', 单引号，两个单引号，"%'",反撇号,'\'
-    "'", "')", "';", '"', '")', '";', '`', '`)', '`;', '\\', "%27", "%%2727", "%25%27", "%60", "%5C"
-]
-#布尔注入的逻辑符号
-SQLI_BOOLEAN_PAYLOADS = [
-    "and", "And", "anD", "AND", "aNd", "or", "oR", "OR"
-]
-
+from WebScanner.Vulnerability_policy_Library.SQLI.sqli_parttern import SQLI_BOOLEAN_PAYLOADS,SQLI_ERROR_PAYLOADS,SQLI_ERRORS
 
 
 class SqliSpider(Spider):
     '''针对每个页面做出SQL注入探测特征码请求，然后根据响应包进行响应包特征码的探测'''
 
     name = "SqliSpider"
+    custom_settings = {
+        'ITEM_PIPELINES': {'WebScanner.pipelines_mysqldb_sqlivulninfo.SqliPipeline': 300 }
+    }
 
 
     def __init__(self):
@@ -75,10 +55,14 @@ class SqliSpider(Spider):
                 list = self.sqli_error_check(response.body)
                 if list[0]:
                     print(r'存在sqli漏洞:报错注入,数据库：', list[1])
+                    db = list[1]
                     self.linkth = self.linkth + 1
                     self.level = 1
+                    vulntype = 'SQLI:'+ db +' error based'
+                    print(vulntype)
                     sqliitem = SqliItem()
                     sqliitem['vulnurl'] = self.url
+                    sqliitem['vulntype'] = vulntype
                     yield sqliitem
                 else:
                     self.level = 2.1
@@ -86,8 +70,12 @@ class SqliSpider(Spider):
                 htmllist = self.boolean_getdetect()
                 if self.sqli_boolean_check(htmllist[0], htmllist[1]):
                     self.linkth = self.linkth + 1
-                    print(r'存在sqli漏洞：布尔注入！')
+                    print(r'存在sqli漏洞：数字型布尔注入！')
                     self.level = 1
+                    sqliitem = SqliItem()
+                    sqliitem['vulnurl'] = self.url
+                    sqliitem['vulntype'] = 'SQLI:int boolean injection'
+                    yield sqliitem
                 else:
                     self.level = 2.2#2.2
                     htmllist = self.boolean_getdetect()
@@ -95,6 +83,10 @@ class SqliSpider(Spider):
                         self.linkth = self.linkth + 1
                         print(r'存在sqli漏洞：字符型布尔注入！')
                         self.level = 1
+                        sqliitem = SqliItem()
+                        sqliitem['vulnurl'] = self.url
+                        sqliitem['vulntype'] = 'SQLI:char boolean injection'
+                        yield sqliitem
                     else:
                         self.level = 2.3#2.3
                         htmllist = self.boolean_getdetect()
@@ -102,6 +94,10 @@ class SqliSpider(Spider):
                             self.linkth = self.linkth + 1
                             print(r'存在sqli漏洞：搜索型布尔注入！')
                             self.level = 1
+                            sqliitem = SqliItem()
+                            sqliitem['vulnurl'] = self.url
+                            sqliitem['vulntype'] = 'SQLI:search boolean injection'
+                            yield sqliitem
                         else:
                             self.level = 2.4
                     if self.level == 2.4:
@@ -116,6 +112,10 @@ class SqliSpider(Spider):
                     self.linkth = self.linkth + 1
                     print(r'存在sqli漏洞：基于时间的盲注！')
                     self.level = 1
+                    sqliitem = SqliItem()
+                    sqliitem['vulnurl'] = self.url
+                    sqliitem['vulntype'] = 'SQLI:time based'
+                    yield sqliitem
                 else:
                     self.level = 1
                     print(r'不存在sqli漏洞!')

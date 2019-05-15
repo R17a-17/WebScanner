@@ -4,58 +4,27 @@
 #python 3.6
 #coding:utf-8
 
+#################################################################
 from scrapy import *
 from pymysql import *
 import re
 import random
 from scrapy.conf import settings
+#################################################################
+#内部导入
 from WebScanner.items_xss import XssItem
-
-
-#XSS:javascript开始符号
-XSS_START = [
-    "<script>", "<Script>"
-]
-
-#XSS:javascript结束符号
-XSS_END = [
-    "</script>","</Script>"
-]
-
-#javascript的一些弹窗标签
-XSS_JS_WINDOW = [
-    "alert", "confirm", "prompt"
-]
-
-#xss:JavaScript on*事件触发函数
-XSS_JS_ONARRAY = [
-    'onload' , 'onerror' , 'onmousemove', 'onclick', 'onsubmit', 'onmouseover', 'onfocus',
-    'onloadeddata', 'onwaiting', 'onredo', 'onprogress', 'ondragenter', 'onreset', 'onended',
-    'onmousedown', 'onforminput', 'onhaschange', 'ondurationchange', 'onpause', 'onplay',
-    'onmousewheel', 'onchange', 'onafterprint', 'oninvalid', 'onloadstart', 'onabort',
-    'oninput', 'onmouseout', 'ondragover', 'onsuspend', 'ontimeupdate', 'onratechange',
-    'ondragleave', 'onresize', 'onselect', 'onundo', 'onemptied', 'ondrag', 'oncanplay',
-    'onstorage', 'onformchange', 'onblur', 'ondragstart', 'onoffline', 'ondrop', 'onkeypress',
-    'ononline', 'onkeydown', 'onpageshow', 'onvolumechange', 'onpopstate', 'oncontextmenu',
-    'onscroll','onunload', 'onloadedmetadata', 'ondragend', 'onseeking', 'onbeforeprint',
-    'oncanplaythrough', 'onbeforeunload', 'onpagehide', 'onmouseup', 'onkeyup', 'onmessage',
-    'onplaying', 'ondblclick', 'onseeked', 'onreadystatechange', 'onstalled'
-]
-
-#html标签类的xss,
-HTMLTAG_XSS_START = [
-    "<video src", "<audio src", "<img src", "<a href", "<iframe src"
-]
-
-HTMLTAG_XSS_END = [
-    "</video>", "</audio>", "</img>" ,"</a>", "</iframe>"
-]
+from WebScanner.Vulnerability_policy_Library.XSS.xss_patterns import XSS_JS_ONARRAY,XSS_JS_WINDOW,XSS_END,XSS_START,HTMLTAG_XSS_START,HTMLTAG_XSS_END
+###############################################################
 
 
 class XssSpider(Spider):
     '''针对每个页面做出探测特征码请求，然后根据响应包进行响应包特征码的探测'''
 
     name = "XssSpider"
+    # 为每个spider指定对应的pipelines
+    custom_settings = {
+        'ITEM_PIPELINES': {'WebScanner.pipelines_mysqldb_xssvulninfo.XssPipeline': 300,}
+    }
 
 
     def __init__(self):
@@ -88,15 +57,24 @@ class XssSpider(Spider):
         if self.detect_code:
             if self.xss_response_check(response.body):
                 self.linkth = self.linkth + 1
-                xssitem = XssItem()
-                xssitem['vulnurl'] = self.url
-                yield xssitem
                 if self.level == 1:
-                    print(r'存在xss漏洞:JavaScript窗口注入')
+                    print(r'存在xss漏洞:JavaScript消息框注入')
+                    xssitem = XssItem()
+                    xssitem['vulnurl'] = self.url
+                    xssitem['vulntype'] = 'XSS:JavaScript messagebox injection'
+                    yield xssitem
                 elif self.level == 2:
                     print(r'存在xss漏洞：HTML标签注入')
+                    xssitem = XssItem()
+                    xssitem['vulnurl'] = self.url
+                    xssitem['vulntype'] = 'XSS:HTML tag injection'
+                    yield xssitem
                 elif self.level == 3:
                     print(r'存在xss漏洞：JavaScript触发事件响应函数')
+                    xssitem = XssItem()
+                    xssitem['vulnurl'] = self.url
+                    xssitem['vulntype'] = 'XSS:JavaScript trigger event callback injection'
+                    yield xssitem
             elif self.level < 3:
                 self.level = self.level + 1
             else:
