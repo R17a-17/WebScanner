@@ -9,24 +9,20 @@ import tkinter.font as tkFont
 import tkinter.ttk as ttk
 from tkinter import messagebox
 import subprocess
-import time
-import os
-from scrapy import cmdline
+import threading
 #-----------------------------------------------
 #内部包导入
-from WebScanner.cmd import WeakpwdSpider
 from WebScanner.GUI import Verify
 from WebScanner.GUI import SiteFileTree
 from WebScanner.GUI import Histogram
 from WebScanner.GUI import PieChart
-from WebScanner.GUI import Processbar
-from WebScanner.spiders import weakpwd_spider
+from WebScanner.Mysqldb import GetVuln
 #--------------------------------------------------
 
 class MForm(tk.Frame):
     '''继承自Frame类，master为Tk类顶级窗体（带标题栏、最大、最小、关闭按钮）'''
 
-    width = 800 #窗口宽度
+    width = 810 #窗口宽度
     height = 680 #窗口高度
     title = 'Web Vulnerability Scanner'
     iconPath = '../img/tkicon.ico'
@@ -139,12 +135,12 @@ class MForm(tk.Frame):
         # self.comboxlist.bind("<<ComboboxSelected>>", self.combox)  # 绑定事件,(下拉列表框被选中时，绑定响应函数)
         self.comboxlist.grid(row=0, column=3, sticky=tk.W)
 
-        #添加扫描、取消按钮
+        #添加扫描、获取结果按钮
         self.scanButton = tk.Button(self.frm_up, text='扫描', command=lambda:self.detect_exec())
         self.scanButton.grid(row=0, column=4, sticky=tk.W,padx=6,pady=6)
-        self.cancelButton = tk.Button(self.frm_up, text='取消', command=lambda:print('hi'))
-        self.cancelButton.grid(row=0, column=5, sticky=tk.E,padx=6,pady=6)
-        self.cancelButton.config(state=tk.DISABLED)
+        self.GetResultButton = tk.Button(self.frm_up, text='获取结果', command=lambda:self.update_result())
+        self.GetResultButton.grid(row=0, column=5, sticky=tk.E,padx=6,pady=6)
+        # self.GetResultButton.config(state=tk.DISABLED)
         #登录配置
         # loginLabel = tk.Labe(self.frm_up,text=' 登录：').grid(row=1, column=0,sticky = tk.W,padx=3)
 
@@ -217,9 +213,9 @@ class MForm(tk.Frame):
         self.ScanGraphView = ttk.Frame(self.tabScanPage)
         self.ScanGraphView.grid(row=0, column=1, sticky=tk.NSEW)
         #添加柱状图部分初始显示所有的漏洞都是0
-        self.Histogram = Histogram.main(self.ScanGraphView,(0,0,0,0,0))
-        #添加饼图部分,初始显示每种类型漏洞都为0，所以比例都一样
-        self.PieChart = PieChart.main(self.ScanGraphView,[25,25,25,25])
+        # self.Histogram = Histogram.main(self.ScanGraphView,(0,0,0,0,0))
+        # #添加饼图部分,初始显示每种类型漏洞都为0，所以比例都一样
+        # self.PieChart = PieChart.main(self.ScanGraphView,[25,25,25,25])
 
 
 
@@ -235,37 +231,24 @@ class MForm(tk.Frame):
     def detect_exec(self):
         # 命令行执行WeakpwdSpider，供GUI、CMD调用
         self.scanButton.config(state=tk.DISABLED)
-        cmd = ''
+        self.cmd = ''
         if Verify.Verify_tgt(self.tgtEntry.get()):
             messagebox.showwarning(title='警告',message='输入的目标url无效！请重新输入')
         else:
             self.Resultlist.insert(tk.END, "开启WebScanner...\n")
             if self.comboxlist.get() == 'XSS':
-                cmd = 'scrapy crawl XssSpider'
+                self.cmd = 'scrapy crawl XssSpider'
             elif self.comboxlist.get() == 'SQL注入':
-                cmd = 'scrapy crawl SqliSpider'
+                self.cmd = 'scrapy crawl SqliSpider'
             elif self.comboxlist.get() == 'CRLF':
-                cmd = 'scrapy crawl CRLF'
+                self.cmd = 'scrapy crawl CRLF'
             elif self.comboxlist.get() == '弱口令':
-                cmd = 'scrapy crawl WeakpwdSpider'
+                self.cmd = 'scrapy crawl WeakpwdSpider'
             elif self.comboxlist.get() == '综合扫描':
-                cmd = 'scrapy crawl VulndetectSpider'
-            self.cmdvalue.set(cmd + ' -a start_url='+ self.tgtEntry.get())
-            print(cmd)
+                self.cmd = 'scrapy crawl VulndetectSpider'
+            self.cmdvalue.set(self.cmd + ' -a start_url='+ self.tgtEntry.get())
+            print(self.cmd)
 
-            self.Resultlist.insert(tk.END, "正在进行弱口令探测...\n")
-            if cmd == 'scrapy crawl WeakpwdSpider':
-                popen = subprocess.Popen('scrapy crawl WeakpwdSpider -a start_url=http://192.168.177.161/dvwa/login.php', stdout=subprocess.PIPE)
-                popen.communicate()
-                # popen = subprocess.Popen(cmd+' -a start_url=' + self.tgtEntry.get(), stdout=subprocess.PIPE)
-                # popen1 = subprocess.Popen('scrapy crawl LinkSpider -a start_url=' + self.tgtEntry.get(), stdout=subprocess.PIPE)
-                # popen1.communicate()
-            else:
-                popen = subprocess.Popen('scrapy crawl WeakpwdSpider -a start_url=' + self.tgtEntry.get(), stdout=subprocess.PIPE)
-                # popen1 = subprocess.Popen('scrapy crawl LinkSpider -a start_url=' + self.tgtEntry.get(), stdout=subprocess.PIPE)
-                # popen2 = subprocess.Popen(cmd, stdout=subprocess.PIPE)
-
-            # self.insertTreeNode()
         self.scanButton.config(state=tk.NORMAL)
 
 
@@ -275,6 +258,79 @@ class MForm(tk.Frame):
         #需要重新部署否则不会充满左侧Frame
         self.tree.grid(row=0, column=0, sticky=tk.NSEW)
 
+    def task(self):
+        '''这里放置耗时的button程序，用来执行系统命令'''
+        self.Resultlist.insert(tk.END, "正在进行弱口令探测...\n")
+        if self.cmd == 'scrapy crawl WeakpwdSpider':
+            popen = subprocess.Popen('scrapy crawl WeakpwdSpider -a start_url=http://192.168.177.161/dvwa/login.php',
+                                     stdout=subprocess.PIPE)
+            popen.communicate()
+            popen = subprocess.Popen(self.cmd+' -a start_url=' + self.tgtEntry.get(), stdout=subprocess.PIPE)
+            # popen1 = subprocess.Popen('scrapy crawl LinkSpider -a start_url=' + self.tgtEntry.get(), stdout=subprocess.PIPE)
+            # popen1.communicate()
+        else:
+            popen = subprocess.Popen('scrapy crawl WeakpwdSpider -a start_url=' + self.tgtEntry.get(),
+                                     stdout=subprocess.PIPE)
+            # popen1 = subprocess.Popen('scrapy crawl LinkSpider -a start_url=' + self.tgtEntry.get(), stdout=subprocess.PIPE)
+            # popen2 = subprocess.Popen(cmd, stdout=subprocess.PIPE)
+
+        self.insertTreeNode()
+
+
+    def starting(self):
+        '''为task方法单独开一个线程'''
+        self.thread = threading.Thread(target=self.task())
+        self.thread.start()
+
+    def getHistogramResult(self):
+        '''获取柱状图扫描结果'''
+        vuln = GetVuln.GetVuln()
+        allvlunnum = vuln.getAllVuln_num()
+        sqlinum = vuln.getSqliVuln_num()
+        xssnum = vuln.getXssVuln_num()
+        crlfnum = vuln.getCrlfVuln_num()
+        weakpwdnum = vuln.getWeakpwdVuln_num()
+        print(allvlunnum)
+        values = (0,0,crlfnum,allvlunnum-sqlinum-crlfnum,sqlinum)
+        print(values)
+        return values
+
+    def getPiechartResult(self):
+        '''获取饼图扫描结果'''
+        vuln = GetVuln.GetVuln()
+        allvlunnum = vuln.getAllVuln_num()
+        sqlinum = vuln.getSqliVuln_num()
+        xssnum = vuln.getXssVuln_num()
+        crlfnum = vuln.getCrlfVuln_num()
+        weakpwdnum = vuln.getWeakpwdVuln_num()
+        values = [xssnum,sqlinum,crlfnum,weakpwdnum]
+        print(values)
+        return values
+
+    def getResultlist(self):
+        '''获取扫描漏洞结果'''
+        vuln = GetVuln.GetVuln()
+        allvulninfo = vuln.getAllVuln_url()
+        allnum = vuln.getAllVuln_num()
+        if allnum != 0:
+            self.Resultlist.insert(tk.END,'############共探测到'+str(allnum) +'个漏洞############\n')
+            for info in allvulninfo:
+                self.Resultlist.insert(tk.END,info['vulntype'] + ':\n' + info['vulnurl'] + '\n\n')
+        else:
+            self.Resultlist.insert(tk.END, '您的网站不存在SQL注入、弱口令、XSS、CRLF漏洞\n')
+
+    def update_result(self):
+        '''更新结果'''
+        self.insertTreeNode()
+        if self.getPiechartResult() != [0,0,0,0]:
+            self.Histogram = Histogram.main(self.ScanGraphView,self.getHistogramResult())
+            self.PieChart = PieChart.main(self.ScanGraphView,self.getPiechartResult())
+        else:
+            # 添加柱状图部分初始显示所有的漏洞都是0
+            self.Histogram = Histogram.main(self.ScanGraphView,(0,0,0,0,0))
+            #添加饼图部分,初始显示每种类型漏洞都为0，所以比例都一样
+            self.PieChart = PieChart.main(self.ScanGraphView,[25,25,25,25])
+        self.getResultlist()
 
 
 if (__name__ == '__main__'):

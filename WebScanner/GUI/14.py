@@ -1,49 +1,97 @@
+from socket import *
+from tkinter import *
 import time
 import threading
-from tkinter import *
+import re
 
-class Processbar(object):
-    '''生成进度条'''
 
-    def __init__(self):
-        top = Tk()
-        top.title('Progress Bar')
-        top.geometry('800x500+290+100')
-        top.resizable(False, False)
-        top.config(bg='#535353')
-        top.mainloop()
+# GUI窗口类
+class Control():
+    # 定义GUI界面
+    def __init__(self, master, fuc):
+        self.parent = master
+        self.parent.title("服务器配置器")
+        self.frame = Frame(self.parent)
+        self.frame.pack(fill=BOTH, expand=3)
+        self.parent.resizable(width=False, height=False)
 
-    def generate_process(self):
-        '''初始化进度条'''
-        # 进度条
-        sum_length = 630
-        canvas_progress_bar = Canvas(self.top, width=sum_length, height=20)
-        canvas_shape = canvas_progress_bar.create_rectangle(0, 0, 0, 25, fill='green')
-        canvas_text = canvas_progress_bar.create_text(292, 4, anchor=NW)
-        canvas_progress_bar.itemconfig(canvas_text, text='00:00:00')
-        var_progress_bar_percent = StringVar()
-        var_progress_bar_percent.set('00.00  %')
-        label_progress_bar_percent = Label(self.top, textvariable=var_progress_bar_percent, fg='#F5F5F5', bg='#535353')
-        canvas_progress_bar.place(relx=0.45, rely=0.4, anchor=CENTER)
-        label_progress_bar_percent.place(relx=0.89, rely=0.4, anchor=CENTER)
-        # 按钮
-        button_start = Button(self.top, text='开始', fg='#F5F5F5', bg='#7A7A7A', command=run, height=1, width=15,
-                              relief=GROOVE, bd=2,
-                              activebackground='#F5F5F5', activeforeground='#535353')
-        button_start.place(relx=0.45, rely=0.5, anchor=CENTER)
+        self.label = Label(self.frame, text="端口设置")
 
-    def update_progress_bar(self):
-        for percent in range(1, 101):
-            hour = int(percent / 3600)
-            minute = int(percent / 60) - hour * 60
-            second = percent % 60
-            green_length = int(sum_length * percent / 100)
-            canvas_progress_bar.coords(canvas_shape, (0, 0, green_length, 25))
-            canvas_progress_bar.itemconfig(canvas_text, text='%02d:%02d:%02d' % (hour, minute, second))
-            var_progress_bar_percent.set('%0.2f  %%' % percent)
-            time.sleep(1)
+        self.label.grid(row=0, column=0, sticky=E)
+        self.entry = Entry(self.frame)
+        self.entry.grid(row=0, column=1, sticky=W + E)
 
-    def run(self):
-        th = threading.Thread(target=update_progress_bar)
-        th.setDaemon(True)
-        th.start()
+        self.label2 = Label(self.frame, text="访问日志")
+        self.label2.grid(row=1, column=0, rowspan=6, sticky=W + N)
+        self.list = Listbox(self.frame, width=100, height=40)
+        self.list.grid(row=3, column=1, rowspan=6, sticky=E + S)
+
+        self.stBtn = Button(self.frame, text="开始服务", command=fuc)
+        self.stBtn.grid(row=10, column=1, sticky=W + E)
+
+
+# 具体功能类
+class ThreadClient():
+    def __init__(self, master):
+        self.master = master
+        self.gui = Control(master, self.starting)  # 将我们定义的GUI类赋给服务类的属性，将执行的功能函数作为参数传入
+        print(threading.currentThread().ident)
+
+    # 获取请求日志
+    def get_log(self, addr, message):
+        timenow = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))
+        way = message.decode('utf-8').split()[0]
+        resorce = message.decode('utf-8').split()[1][1:]
+        info = timenow + ": " + "client:" + str(addr) + " way: " + way + " resorce: " + resorce
+        return info
+
+     # 监听方法
+    def start_listen(self):
+        print(threading.currentThread().ident)
+        host = '192.168.177.1'  # 对应本机所有ip地址
+        port = int(self.gui.entry.get())  # TCP socket端口
+        if not port:
+            port = 80
+        address = (host, port)
+        serverSocket = socket(AF_INET, SOCK_STREAM)  # 创建TCP socket
+        serverSocket.bind(address)  # 绑定地址
+        serverSocket.listen(1)  # 开始监听
+        keepalive = False
+        while True:
+            try:
+                # if not keepalive:
+                connectionSocket, clientAddr = serverSocket.accept()  # 获取「连接套接字」
+                print("create------")
+                print("recv the http request")
+                message = connectionSocket.recv(1024)  # 获得http报文
+                print("request", message.decode('utf-8'))
+                info = self.get_log(clientAddr, message)
+                self.gui.list.insert(END, info)
+                filename = message.split()[1]  # 获得URI，去掉首部'/'就是文件名
+                keepalive = len(re.findall(r'keep-alive', message.decode('utf-8')))
+                f = open(filename[1:], 'rb')
+
+                outputdata = f.readlines()  # 逐行读出文件内容并存到list中
+                connectionSocket.send('HTTP/1.1 200 OK\r\n\r\n'.encode('utf-8'))  # 发response行
+
+                for i in range(0, len(outputdata)):
+                    connectionSocket.send(outputdata[i])  # 把文件各行数据塞到response中 send只能是string类型
+                # if not keepalive:
+                connectionSocket.close()  # 关闭数据连接
+
+            except IOError:
+                connectionSocket.send("404 not found".encode('utf-8'))  # 文件不存在时异常处理
+                connectionSocket.close()
+        serverSocket.close()
+
+    # 为方法开一个单独的线程
+    def starting(self):
+        self.thread = threading.Thread(target=self.start_listen)
+        self.thread.start()
+
+
+if __name__ == '__main__':
+    root = Tk()
+    print(threading.currentThread().ident)
+    tool = ThreadClient(root)
+    root.mainloop()

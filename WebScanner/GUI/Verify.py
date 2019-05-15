@@ -11,6 +11,14 @@ def Verify_tgt(tgt):
         return True
     return False
 
+def Verify_combox(option):
+    #验证配置选项是否进行了选择
+    if option == '':
+        print('option',option)
+        return True
+    return False
+
+
 if __name__ == '__main__':
     a = Verify_tgt('1')
     print(a)

@@ -1,31 +1,46 @@
-#--Created by WD
-#python 3.6
-#coding:utf-8
-
-import tkinter
-from tkinter import ttk
+from tkinter import *
+import datetime
+import threading
 
 
-def go(*args):  # 处理事件，*args表示可变参数
-    print(comboxlist.get())  # 打印选中的值
+def do_word():      # 这里没特别的需求不需要动
+    global a
+    if a:
+        t = threading.Thread(target=task)
+        t.setDaemon(True)
+        t.start()
+    root.after(100,do_word)
+
+def task():
+    # 这里放超耗时间的东西，如请求服务器，读或写文件等。
+    # 注意的是一般读写分离，
+    # 读文件一条线程，写文件一条线程或者使用队列就不用分两条线程操作了。
+    dd = datetime.datetime.now()
+    label['text'] = dd
 
 
-win = tkinter.Tk()  # 构造窗体
-# comvalue = tkinter.StringVar()  # 窗体自带的文本，新建一个值
-# comboxlist = ttk.Combobox(win, textvariable=comvalue)  # 初始化
-# comboxlist["values"] = ("1", "2", "3", "4")
-# comboxlist.current(0)  # 选择第一个
-# comboxlist.bind("<<ComboboxSelected>>", go)  # 绑定事件,(下拉列表框被选中时，绑定go()函数)
-# comboxlist.pack()
+def one_word():
+    print('开始')
+    global a
+    a = 1
 
-comvalue = tkinter.StringVar()  # 窗体自带的文本，新建一个值
-comboxlist = ttk.Combobox(win,textvariable=comvalue, state='readonly', width=40)  # 初始化
-confList = ('综合扫描', 'XSS', 'SQL注入', 'CLRF', '弱口令')
-comboxlist["values"] = confList
-comboxlist.current(0)  # 选择第一个
-comboxlist.bind("<<ComboboxSelected>>", go)  # 绑定事件,(下拉列表框被选中时，绑定go()函数)
-comboxlist.grid(row=0, column=3, sticky=tkinter.W)
+def quit_word():
+    print('暂停')
+    global a
+    a =0
 
-win.mainloop()  # 进入消息循环
+# 说是多线程这里只用了一个线程，仅供参考。
+# 作者：hhaoao
 
+##########################gui############################
+a = 0       # 控制线程的开关
+root = Tk()
+button = Button(root,text='开始',command=one_word)
+quit_button = Button(root,text='暂停',command=quit_word)
+label = Label(root,text='redy...')
 
+button.grid()
+quit_button.grid()
+label.grid()
+do_word()
+root.mainloop()
