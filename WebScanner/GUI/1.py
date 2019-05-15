@@ -8,15 +8,16 @@ import tkinter as tk
 import tkinter.font as tkFont
 import tkinter.ttk as ttk
 from tkinter import messagebox
-import subprocess
 import threading
 import os
+import subprocess
 #-----------------------------------------------
 #内部包导入
 from WebScanner.GUI import Verify
 from WebScanner.GUI import SiteFileTree
 from WebScanner.GUI import Histogram
 from WebScanner.GUI import PieChart
+from WebScanner.Mysqldb import GetVuln
 #--------------------------------------------------
 
 CMD = {
@@ -44,8 +45,6 @@ class MForm(tk.Frame):
         root.resizable(False, False)
         self.cmd = ''
         self.fuc = fuc
-
-
 
     def initComponent(self, master):
         '''初始化GUI组件'''
@@ -147,7 +146,7 @@ class MForm(tk.Frame):
         #添加扫描、获取结果按钮
         self.scanButton = tk.Button(self.frm_up, text='扫描', command=lambda:self.fuc())
         self.scanButton.grid(row=0, column=4, sticky=tk.W,padx=6,pady=6)
-        self.GetResultButton = tk.Button(self.frm_up, text='获取结果', command=lambda:print('hi'))
+        self.GetResultButton = tk.Button(self.frm_up, text='获取结果', command=lambda:self.update_result())
         self.GetResultButton.grid(row=0, column=5, sticky=tk.E,padx=6,pady=6)
         self.GetResultButton.config(state=tk.DISABLED)
         #登录配置
@@ -222,9 +221,9 @@ class MForm(tk.Frame):
         self.ScanGraphView = ttk.Frame(self.tabScanPage)
         self.ScanGraphView.grid(row=0, column=1, sticky=tk.NSEW)
         #添加柱状图部分初始显示所有的漏洞都是0
-        self.Histogram = Histogram.main(self.ScanGraphView,(0,0,0,0,0))
-        #添加饼图部分,初始显示每种类型漏洞都为0，所以比例都一样
-        self.PieChart = PieChart.main(self.ScanGraphView,[25,25,25,25])
+        # self.Histogram = Histogram.main(self.ScanGraphView,(0,0,0,0,0))
+        # #添加饼图部分,初始显示每种类型漏洞都为0，所以比例都一样
+        # self.PieChart = PieChart.main(self.ScanGraphView,[25,25,25,25])
 
 
 
@@ -237,12 +236,86 @@ class MForm(tk.Frame):
         messagebox.showinfo(title='使用方法', message= 'WebScanner提供两种使用方法：命令行和交界面\n\r在使用交互界面时，请正确输入目标网站的url和扫描方法！')
 
 
+    def detect_exec(self):
+        # 命令行执行WeakpwdSpider，供GUI、CMD调用
+        self.scanButton.config(state=tk.DISABLED)
+        self.cmd = ''
+        if Verify.Verify_tgt(self.tgtEntry.get()):
+            messagebox.showwarning(title='警告',message='输入的目标url无效！请重新输入')
+        else:
+            self.Resultlist.insert(tk.END, "开启WebScanner...\n")
+            if self.comboxlist.get() == 'XSS':
+                self.cmd = 'scrapy crawl XssSpider'
+            elif self.comboxlist.get() == 'SQL注入':
+                self.cmd = 'scrapy crawl SqliSpider'
+            elif self.comboxlist.get() == 'CRLF':
+                self.cmd = 'scrapy crawl CRLF'
+            elif self.comboxlist.get() == '弱口令':
+                self.cmd = 'scrapy crawl WeakpwdSpider'
+            elif self.comboxlist.get() == '综合扫描':
+                self.cmd = 'scrapy crawl VulndetectSpider'
+            self.cmdvalue.set(self.cmd + ' -a start_url='+ self.tgtEntry.get())
+            print(self.cmd)
+
+        self.scanButton.config(state=tk.NORMAL)
 
 
-    def starting(self):
-        '''为task方法单独开一个线程'''
-        self.thread = threading.Thread(target=self.task)
-        self.thread.start()
+    def insertTreeNode(self):
+        '''向网站列表插入子节点生成树'''
+        SiteFileTree.main(self.tree)
+        #需要重新部署否则不会充满左侧Frame
+        self.tree.grid(row=0, column=0, sticky=tk.NSEW)
+
+
+    def getHistogramResult(self):
+        '''获取柱状图扫描结果'''
+        vuln = GetVuln.GetVuln()
+        allvlunnum = vuln.getAllVuln_num()
+        sqlinum = vuln.getSqliVuln_num()
+        xssnum = vuln.getXssVuln_num()
+        crlfnum = vuln.getCrlfVuln_num()
+        weakpwdnum = vuln.getWeakpwdVuln_num()
+        print(allvlunnum)
+        values = (0,0,crlfnum,allvlunnum-sqlinum-crlfnum,sqlinum)
+        print(values)
+        return values
+
+    def getPiechartResult(self):
+        '''获取饼图扫描结果'''
+        vuln = GetVuln.GetVuln()
+        allvlunnum = vuln.getAllVuln_num()
+        sqlinum = vuln.getSqliVuln_num()
+        xssnum = vuln.getXssVuln_num()
+        crlfnum = vuln.getCrlfVuln_num()
+        weakpwdnum = vuln.getWeakpwdVuln_num()
+        values = [xssnum,sqlinum,crlfnum,weakpwdnum]
+        print(values)
+        return values
+
+    def getResultlist(self):
+        '''获取扫描漏洞结果'''
+        vuln = GetVuln.GetVuln()
+        allvulninfo = vuln.getAllVuln_url()
+        allnum = vuln.getAllVuln_num()
+        if allnum != 0:
+            self.Resultlist.insert(tk.END,'############共探测到'+str(allnum) +'个漏洞############\n')
+            for info in allvulninfo:
+                self.Resultlist.insert(tk.END,info['vulntype'] + ':\n' + info['vulnurl'] + '\n\n')
+        else:
+            self.Resultlist.insert(tk.END, '您的网站不存在SQL注入、弱口令、XSS、CRLF漏洞\n')
+
+    def update_result(self):
+        '''更新结果'''
+        self.insertTreeNode()
+        if self.getPiechartResult() != [0,0,0,0]:
+            self.Histogram = Histogram.main(self.ScanGraphView,self.getHistogramResult())
+            self.PieChart = PieChart.main(self.ScanGraphView,self.getPiechartResult())
+        else:
+            # 添加柱状图部分初始显示所有的漏洞都是0
+            self.Histogram = Histogram.main(self.ScanGraphView,(0,0,0,0,0))
+            #添加饼图部分,初始显示每种类型漏洞都为0，所以比例都一样
+            self.PieChart = PieChart.main(self.ScanGraphView,[25,25,25,25])
+        self.getResultlist()
 
 ############################################################################################
 
@@ -273,7 +346,13 @@ class ThreadClient():
             print(self.gui.cmd)
             self.gui.Resultlist.insert(tk.END, "正在进行弱口令探测...\n")
             if self.gui.cmd == 'scrapy crawl WeakpwdSpider':
-                os.system('scrapy crawl WeakpwdSpider -a start_url=http://192.168.177.161/dvwa/login.php')
+                popen = subprocess.Popen('scrapy crawl WeakpwdSpider -a start_url=http://192.168.177.161/dvwa/login.php',
+                    stdout=subprocess.PIPE)
+                while True:
+                    if popen.stdout.readline() == b'':
+                        break
+                    self.gui.Resultlist.insert(tk.END,popen.stdout.readline().decode('utf8'))
+                popen.communicate()
                 os.system('scrapy crawl LinkSpider -a start_url=http://192.168.177.161/dvwa/login.php')
             elif self.gui.cmd == 'scrapy crawl VulndetectSpider':
                 os.system('scrapy crawl WeakpwdSpider -a start_url=http://192.168.177.161/dvwa/login.php')
@@ -283,7 +362,9 @@ class ThreadClient():
                 os.system('scrapy crawl LinkSpider -a start_url=http://192.168.177.161/dvwa/login.php')
                 os.system(self.gui.cmd)
         self.gui.scanButton.config(state=tk.NORMAL)
-        self.gui.GetResultButton.config(state=tk.NORMAL)
+        self.gui.GetResultButton.config(state = tk.NORMAL)
+        self.gui.Resultlist.insert(tk.END,'探测完成！请点击获取结果。\n')
+        # self.gui.update_result()
 
 
 

@@ -8,8 +8,6 @@ import tkinter as tk
 import tkinter.font as tkFont
 import tkinter.ttk as ttk
 from tkinter import messagebox
-import subprocess
-import threading
 #-----------------------------------------------
 #内部包导入
 from WebScanner.GUI import Verify
@@ -18,6 +16,7 @@ from WebScanner.GUI import Histogram
 from WebScanner.GUI import PieChart
 from WebScanner.Mysqldb import GetVuln
 #--------------------------------------------------
+
 
 class MForm(tk.Frame):
     '''继承自Frame类，master为Tk类顶级窗体（带标题栏、最大、最小、关闭按钮）'''
@@ -28,15 +27,14 @@ class MForm(tk.Frame):
     iconPath = '../img/tkicon.ico'
 
 
-    def __init__(self, master=None):
+    def __init__(self, master, fuc):
         super().__init__(master)
         self.initComponent(master)
         self.info = []
         # 大小不可变（最大化按钮不可用）
-        root.resizable(False, False)
+        master.resizable(False, False)
         self.cmd = ''
-
-
+        self.fuc = fuc
 
     def initComponent(self, master):
         '''初始化GUI组件'''
@@ -136,11 +134,11 @@ class MForm(tk.Frame):
         self.comboxlist.grid(row=0, column=3, sticky=tk.W)
 
         #添加扫描、获取结果按钮
-        self.scanButton = tk.Button(self.frm_up, text='扫描', command=lambda:self.detect_exec())
+        self.scanButton = tk.Button(self.frm_up, text='扫描', command=lambda:self.fuc())
         self.scanButton.grid(row=0, column=4, sticky=tk.W,padx=6,pady=6)
         self.GetResultButton = tk.Button(self.frm_up, text='获取结果', command=lambda:self.update_result())
         self.GetResultButton.grid(row=0, column=5, sticky=tk.E,padx=6,pady=6)
-        # self.GetResultButton.config(state=tk.DISABLED)
+        self.GetResultButton.config(state=tk.DISABLED)
         #登录配置
         # loginLabel = tk.Labe(self.frm_up,text=' 登录：').grid(row=1, column=0,sticky = tk.W,padx=3)
 
@@ -258,29 +256,6 @@ class MForm(tk.Frame):
         #需要重新部署否则不会充满左侧Frame
         self.tree.grid(row=0, column=0, sticky=tk.NSEW)
 
-    def task(self):
-        '''这里放置耗时的button程序，用来执行系统命令'''
-        self.Resultlist.insert(tk.END, "正在进行弱口令探测...\n")
-        if self.cmd == 'scrapy crawl WeakpwdSpider':
-            popen = subprocess.Popen('scrapy crawl WeakpwdSpider -a start_url=http://192.168.177.161/dvwa/login.php',
-                                     stdout=subprocess.PIPE)
-            popen.communicate()
-            popen = subprocess.Popen(self.cmd+' -a start_url=' + self.tgtEntry.get(), stdout=subprocess.PIPE)
-            # popen1 = subprocess.Popen('scrapy crawl LinkSpider -a start_url=' + self.tgtEntry.get(), stdout=subprocess.PIPE)
-            # popen1.communicate()
-        else:
-            popen = subprocess.Popen('scrapy crawl WeakpwdSpider -a start_url=' + self.tgtEntry.get(),
-                                     stdout=subprocess.PIPE)
-            # popen1 = subprocess.Popen('scrapy crawl LinkSpider -a start_url=' + self.tgtEntry.get(), stdout=subprocess.PIPE)
-            # popen2 = subprocess.Popen(cmd, stdout=subprocess.PIPE)
-
-        self.insertTreeNode()
-
-
-    def starting(self):
-        '''为task方法单独开一个线程'''
-        self.thread = threading.Thread(target=self.task())
-        self.thread.start()
 
     def getHistogramResult(self):
         '''获取柱状图扫描结果'''
@@ -331,12 +306,3 @@ class MForm(tk.Frame):
             #添加饼图部分,初始显示每种类型漏洞都为0，所以比例都一样
             self.PieChart = PieChart.main(self.ScanGraphView,[25,25,25,25])
         self.getResultlist()
-
-
-if (__name__ == '__main__'):
-    root = tk.Tk()
-
-    # root.option_add("*Font", "宋体")
-    root.minsize(800, 480)
-    app = MForm(root)
-    root.mainloop()

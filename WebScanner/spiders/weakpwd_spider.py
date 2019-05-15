@@ -67,9 +67,9 @@ class Weakpwd_Spider(Spider):
             self.passth = self.passth + 1
             yield Request(self.start_urls[0], callback=self.parse, dont_filter = True)
         else:
-            print('>>>登录成功!!!用户名:', self.username, ',密码:', self.password)
+            print('>>>登录成功!!!username:', self.username, ',password:', self.password)
             string = 'Weak Password:the username is ' + self.username + ' and the password:'+self.password
-            print(string)
+            # print(string)
             # # dumps 将数据转换成字符串
             # json_str = json.dumps(self.formdata)
             # print(json_str)
