@@ -5,12 +5,8 @@
 from scrapy import *
 from pymysql import *
 import re
-import random
-import requests
-import json
 from WebScanner.Vulnerability_policy_Library.WeakPd.pass_list import pass_list
 from scrapy.crawler import CrawlerProcess
-import scrapy.cmdline
 
 class Weakpwd_Spider(Spider):
     '''弱口令漏洞检测'''
@@ -40,6 +36,7 @@ class Weakpwd_Spider(Spider):
     def parse(self, response):
 
         '''从字典列表中获取一个密码'''
+        self.loginurl = response.url
         self.username = 'admin'
         self.password = self.pass_list[self.passth]
         #根据表单属性等获取fromdata
@@ -62,14 +59,14 @@ class Weakpwd_Spider(Spider):
 
     def after_login(self, response):
         '''check login succeed before going on'''
-        if response.url == self.start_urls[0]:
-            print(r'>>>登录失败')
+        if re.match(".+login.+",response.url) != None or response.url == self.loginurl:
+            print(r'>>>Login failed')
             self.passth = self.passth + 1
             yield Request(self.start_urls[0], callback=self.parse, dont_filter = True)
         else:
-            print('>>>登录成功!!!username:', self.username, ',password:', self.password)
+            str ='>>>Login success!!!username:'+ self.username + ',password:' + self.password
             string = 'Weak Password:the username is ' + self.username + ' and the password:'+self.password
-            # print(string)
+            print(str)
             # # dumps 将数据转换成字符串
             # json_str = json.dumps(self.formdata)
             # print(json_str)
@@ -142,5 +139,4 @@ def main(url):
     # scrapy.cmdline.execute(('scrapy crawl WeakpwdSpider -a start_url='+url[0]).split())  # 这就是我们在命令行中的代码
 
 if __name__ == '__main__':
-    pass
-    # main(url)
+    main('http://192.168.177.161/dvwa/index.php')

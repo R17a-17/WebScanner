@@ -36,9 +36,9 @@ class CRLF_Spider(Spider):
         ''''''
         print(response.headers)
         if self.crlf_check(response.headers):
-            print('存在crlf漏洞')
+            print('>>>crlf')
         else:
-            print('不存在crlf漏洞')
+            print('>>>no crlf')
 
         self.linkth = self.linkth + 1
         self.url = self.geturlfrommysql(self.linkth)

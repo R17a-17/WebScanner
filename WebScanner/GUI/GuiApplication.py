@@ -35,6 +35,7 @@ class MForm(tk.Frame):
         master.resizable(False, False)
         self.cmd = ''
         self.fuc = fuc
+        self.fromloginflag = True
 
     def initComponent(self, master):
         '''初始化GUI组件'''
@@ -95,7 +96,7 @@ class MForm(tk.Frame):
         self.frm_right.grid(row=0, column=1, sticky=tk.NSEW)  # 右侧Frame帧四个方向拉伸
         self.panewin.add(self.frm_right)# 将右侧Frame帧添加到面板
         self.initCtrl()#初始化右侧结果显示界面
-
+        self.fromloginflag = messagebox.askyesno(title='扫描模式', message='如果从登录页面开始扫描，请点击"是"，并在目标中填写登录链接；\n否则点击"否"')
 
     def initMenu(self, master):
         '''初始化菜单'''
@@ -126,11 +127,8 @@ class MForm(tk.Frame):
         #'设置配置的下拉列表'
         comvalue = tk.StringVar()  # 窗体自带的文本，新建一个值
         self.comboxlist = ttk.Combobox(self.frm_up, textvariable=comvalue, state='readonly', width=40)  # 初始化
-        # confList = ('综合扫描', 'XSS', 'SQL注入', 'CLRF', '弱口令')
-        # self.comboxlist["values"] = confList
         self.comboxlist["value"] = ('综合扫描', 'XSS', 'SQL注入', 'CRLF', '弱口令')
-        self.comboxlist.current(newindex=0)  # 选择第一个
-        # self.comboxlist.bind("<<ComboboxSelected>>", self.combox)  # 绑定事件,(下拉列表框被选中时，绑定响应函数)
+        self.comboxlist.current(0)  # 选择第一个
         self.comboxlist.grid(row=0, column=3, sticky=tk.W)
 
         #添加扫描、获取结果按钮
@@ -215,7 +213,7 @@ class MForm(tk.Frame):
         # #添加饼图部分,初始显示每种类型漏洞都为0，所以比例都一样
         # self.PieChart = PieChart.main(self.ScanGraphView,[25,25,25,25])
 
-
+###########################################菜单栏响应###################################################
 
 
     def aboutmenu(self):
@@ -225,29 +223,7 @@ class MForm(tk.Frame):
     def usemenu(self):
         messagebox.showinfo(title='使用方法', message= 'WebScanner提供两种使用方法：命令行和交界面\n\r在使用交互界面时，请正确输入目标网站的url和扫描方法！')
 
-
-    def detect_exec(self):
-        # 命令行执行WeakpwdSpider，供GUI、CMD调用
-        self.scanButton.config(state=tk.DISABLED)
-        self.cmd = ''
-        if Verify.Verify_tgt(self.tgtEntry.get()):
-            messagebox.showwarning(title='警告',message='输入的目标url无效！请重新输入')
-        else:
-            self.Resultlist.insert(tk.END, "开启WebScanner...\n")
-            if self.comboxlist.get() == 'XSS':
-                self.cmd = 'scrapy crawl XssSpider'
-            elif self.comboxlist.get() == 'SQL注入':
-                self.cmd = 'scrapy crawl SqliSpider'
-            elif self.comboxlist.get() == 'CRLF':
-                self.cmd = 'scrapy crawl CRLF'
-            elif self.comboxlist.get() == '弱口令':
-                self.cmd = 'scrapy crawl WeakpwdSpider'
-            elif self.comboxlist.get() == '综合扫描':
-                self.cmd = 'scrapy crawl VulndetectSpider'
-            self.cmdvalue.set(self.cmd + ' -a start_url='+ self.tgtEntry.get())
-            print(self.cmd)
-
-        self.scanButton.config(state=tk.NORMAL)
+######################################获取结果#######################################################
 
 
     def insertTreeNode(self):

@@ -48,8 +48,6 @@ class SqliPipeline:
         sql = 'INSERT INTO t_vulninfo(vulnurl, vulntype) VALUES (%s,%s)'
         # sql = 'INSERT INTO t_link_tmp(link) SELECT %s FROM DUAL WHERE NOT EXISTS(SELECT link from t_link_tmp where link = %s)'
         try:
-            print('NNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN')
             tx.execute(sql,values)
-            print('YYYYYYYYYYYYYYYYYYYYYYYYYYYY')
         except:
             pass

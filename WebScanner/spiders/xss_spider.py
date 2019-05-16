@@ -1,5 +1,3 @@
-
-
 #--Created by WD
 #python 3.6
 #coding:utf-8
@@ -58,19 +56,19 @@ class XssSpider(Spider):
             if self.xss_response_check(response.body):
                 self.linkth = self.linkth + 1
                 if self.level == 1:
-                    print(r'存在xss漏洞:JavaScript消息框注入')
+                    print('>>>' +self.url + '\nXSS:JavaScript messagebox injection')
                     xssitem = XssItem()
                     xssitem['vulnurl'] = self.url
                     xssitem['vulntype'] = 'XSS:JavaScript messagebox injection'
                     yield xssitem
                 elif self.level == 2:
-                    print(r'存在xss漏洞：HTML标签注入')
+                    print('>>>' + self.url + '\nXSS:HTML tag injection')
                     xssitem = XssItem()
                     xssitem['vulnurl'] = self.url
                     xssitem['vulntype'] = 'XSS:HTML tag injection'
                     yield xssitem
                 elif self.level == 3:
-                    print(r'存在xss漏洞：JavaScript触发事件响应函数')
+                    print('>>>' + self.url + '\nXSS:JavaScript trigger event callback injection')
                     xssitem = XssItem()
                     xssitem['vulnurl'] = self.url
                     xssitem['vulntype'] = 'XSS:JavaScript trigger event callback injection'
@@ -79,17 +77,16 @@ class XssSpider(Spider):
                 self.level = self.level + 1
             else:
                 self.level = 1
-                print(r'不存在xss漏洞')
                 self.linkth = self.linkth + 1
+                print(">>>no xss")
         else:
-            print(r'不存在xss漏洞')
+            print(">>>no injection point")
             self.linkth = self.linkth + 1
 
         self.url = self.geturlfrommysql(self.linkth)
 
         if self.url:
             self.url = self.xss_detect()
-            print("正在测试第%d个url"%self.linkth)
             # 如果找到下一页的URL，构造新的Request 对象
             yield Request(self.url, callback=self.parse, cookies = self.cookie)
 
@@ -114,7 +111,6 @@ class XssSpider(Spider):
             value = list[parameter_num]['value']
             #替换前字符串
             oldstr = parameter + '=' + value
-            print("Scanning %s for xss in parameter '%s'" % (url, parameter))
             #根据level等级生成探测码
             self.detect_code = eval('self.generate_detectcode_level' + str(self.level))()
             value = value + self.detect_code

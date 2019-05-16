@@ -16,7 +16,23 @@ def sitefile_tree(list,url):
     #匹配目标网站的目录树的正则表达式
     p = '^(http://)?([\w-]+\.)+[\w-]+(/(?P<file1>[a-zA-Z0-9.? =_#&-]*))?(/(?P<file2>[a-zA-Z0-9.? =_#&-]*))?(/(?P<file3>[a-zA-Z0-9.?= _#&-]*))?(/(?P<file4>[a-zA-Z0-9.? =_#&-]*))?(/(?P<file5>[a-zA-Z0-9.? =_#&-]*))?(/(?P<file6>[a-zA-Z0-9.?=_#&-]*))?(/(?P<file7>[a-zA-Z0-9.?=_#&-]*))?(/(?P<file8>[a-zA-Z0-9.?=_#&-]*))?'
     filetree = re.match(p,url)
-    list.append({'file1': filetree.group('file1'),'file2': filetree.group('file2'),'file3': filetree.group('file3'),'file4': filetree.group('file4'),'file5': filetree.group('file5'),'file6': filetree.group('file6'),'file7': filetree.group('file7'),'file8': filetree.group('file8')})
+    file1 = filetree.group('file1').split('?')[0] if filetree.group('file1')!=None else None
+    file2 = filetree.group('file2').split('?')[0] if filetree.group('file2') != None else None
+    file3 = filetree.group('file3').split('?')[0] if filetree.group('file3') != None else None
+    file4 = filetree.group('file4').split('?')[0] if filetree.group('file4') != None else None
+    file5 = filetree.group('file5').split('?')[0] if filetree.group('file5') != None else None
+    file6 = filetree.group('file6').split('?')[0] if filetree.group('file6') != None else None
+    file7 = filetree.group('file7').split('?')[0] if filetree.group('file7') != None else None
+    file8 = filetree.group('file8').split('?')[0] if filetree.group('file8') != None else None
+    list.append({'file1': file1,
+                 'file2': file2,
+                 'file3': file3,
+                 'file4': file4,
+                 'file5': file5,
+                 'file6': file6,
+                 'file7': file7,
+                 'file8': file8,
+                 })
 
 
 
@@ -40,31 +56,31 @@ def generate_guitree(tree,myid0, list,domain):
         if treenode.__contains__(id) and id != None:
             a1 = treenode.find_child(id)
             node1 = myid0
-            if a1.__contains__(fileset['file2']) and fileset['file2'] != None:
+            if a1.__contains__(fileset['file2']) and fileset['file2'] != None and fileset['file2'] != '' :
                 a2 = a1.find_child(fileset['file2'])
-                if a2.__contains__(fileset['file3']) and fileset['file3'] != None:
+                if a2.__contains__(fileset['file3']) and fileset['file3'] != None and fileset['file3'] != '':
                     a3 = a2.find_child(fileset['file3'])
-                    if a3.__contains__(fileset['file4']) and fileset['file4'] != None:
+                    if a3.__contains__(fileset['file4']) and fileset['file4'] != None and fileset['file4'] != '':
                         a4 = a3.find_child(fileset['file4'])
-                        if a4.__contains__(fileset['file5']) and fileset['file5'] != None:
+                        if a4.__contains__(fileset['file5']) and fileset['file5'] != None and fileset['file5'] != '':
                             a5 = a4.find_child(fileset['file5'])
-                            if a5.__contains__(fileset['file6']) and fileset['file6'] != None:
+                            if a5.__contains__(fileset['file6']) and fileset['file6'] != None and fileset['file6'] != '':
                                 a6 = a5.find_child(fileset['file6'])
-                                if a6.__contains__(fileset['file7']) and fileset['file7'] != None:
+                                if a6.__contains__(fileset['file7']) and fileset['file7'] != None and fileset['file7'] != '':
                                     a7 = a6.find_child(fileset['file7'])
-                                    if a7.__contains__(fileset['file8']) and fileset['file8'] != None:
+                                    if a7.__contains__(fileset['file8']) and fileset['file8'] != None and fileset['file8'] != '':
                                         pass
-                                    elif fileset['file8'] != None:
+                                    elif fileset['file8'] != None and fileset['file8'] != '':
                                         node8 = tree.insert(
                                             fileset['file1'] + ' ' + fileset['file2'] + ' ' + fileset['file3'] + ' ' +
                                             fileset['file4'] + ' ' + fileset['file5'] + ' ' + fileset['file6'] + ' ' +
                                             fileset['file7'], len(a7) - 1,
                                             fileset['file1'] + ' ' + fileset['file2'] + ' ' + fileset['file3'] + ' ' +
                                             fileset['file4'] + ' ' + fileset['file5'] + ' ' + fileset['file6'] + ' ' +
-                                            fileset['file7'] + ' ' + fileset['file8'], open=False,
+                                            fileset['file7'] + ' ' + fileset['file8'], open=True,
                                             text=fileset['file8'])
                                         a8 = a7.add_child(fileset['file8'])
-                                elif fileset['file7'] != None:
+                                elif fileset['file7'] != None and fileset['file7'] != '':
                                     node7 = tree.insert(
                                         fileset['file1'] + ' ' + fileset['file2'] + ' ' + fileset['file3'] + ' ' +
                                         fileset[
@@ -72,27 +88,27 @@ def generate_guitree(tree,myid0, list,domain):
                                         fileset['file1'] + ' ' + fileset['file2'] + ' ' + fileset['file3'] + ' ' +
                                         fileset[
                                             'file4'] + ' ' + fileset['file5'] + ' ' + fileset['file6'] + ' ' + fileset[
-                                            'file7'], open=False, text=fileset['file7'])
+                                            'file7'], open=True, text=fileset['file7'])
                                     a7 = a6.add_child(fileset['file7'])
-                                    if fileset['file8'] != None:
+                                    if fileset['file8'] != None and fileset['file8'] != '':
                                         node8 = tree.insert(
                                             fileset['file1'] + ' ' + fileset['file2'] + ' ' + fileset['file3'] + ' ' +
                                             fileset['file4'] + ' ' + fileset['file5'] + ' ' + fileset['file6'] + ' ' +
                                             fileset['file7'], len(a7) - 1,
                                             fileset['file1'] + ' ' + fileset['file2'] + ' ' + fileset['file3'] + ' ' +
                                             fileset['file4'] + ' ' + fileset['file5'] + ' ' + fileset['file6'] + ' ' +
-                                            fileset['file7'] + ' ' + fileset['file8'], open=False,
+                                            fileset['file7'] + ' ' + fileset['file8'], open=True,
                                             text=fileset['file8'])
                                         a8 = a7.add_child(fileset['file8'])
-                            elif fileset['file6'] != None:
+                            elif fileset['file6'] != None and fileset['file6'] != '':
                                 node6 = tree.insert(
                                     fileset['file1'] + ' ' + fileset['file2'] + ' ' + fileset['file3'] + ' ' + fileset[
                                         'file4'] + ' ' + fileset['file5'], len(a5) - 1,
                                     fileset['file1'] + ' ' + fileset['file2'] + ' ' + fileset['file3'] + ' ' + fileset[
-                                        'file4'] + ' ' + fileset['file5'] + ' ' + fileset['file6'], open=False,
+                                        'file4'] + ' ' + fileset['file5'] + ' ' + fileset['file6'], open=True,
                                     text=fileset['file6'])
                                 a6 = a5.add_child(fileset['file6'])
-                                if fileset['file7'] != None:
+                                if fileset['file7'] != None and fileset['file7'] != '':
                                     node7 = tree.insert(
                                         fileset['file1'] + ' ' + fileset['file2'] + ' ' + fileset['file3'] + ' ' +
                                         fileset[
@@ -100,35 +116,35 @@ def generate_guitree(tree,myid0, list,domain):
                                         fileset['file1'] + ' ' + fileset['file2'] + ' ' + fileset['file3'] + ' ' +
                                         fileset[
                                             'file4'] + ' ' + fileset['file5'] + ' ' + fileset['file6'] + ' ' + fileset[
-                                            'file7'], open=False, text=fileset['file7'])
+                                            'file7'], open=True, text=fileset['file7'])
                                     a7 = a6.add_child(fileset['file7'])
-                                    if fileset['file8'] != None:
+                                    if fileset['file8'] != None and fileset['file8'] != '':
                                         node8 = tree.insert(
                                             fileset['file1'] + ' ' + fileset['file2'] + ' ' + fileset['file3'] + ' ' +
                                             fileset['file4'] + ' ' + fileset['file5'] + ' ' + fileset['file6'] + ' ' +
                                             fileset['file7'], len(a7) - 1,
                                             fileset['file1'] + ' ' + fileset['file2'] + ' ' + fileset['file3'] + ' ' +
                                             fileset['file4'] + ' ' + fileset['file5'] + ' ' + fileset['file6'] + ' ' +
-                                            fileset['file7'] + ' ' + fileset['file8'], open=False,
+                                            fileset['file7'] + ' ' + fileset['file8'], open=True,
                                             text=fileset['file8'])
                                         a8 = a7.add_child(fileset['file8'])
-                        elif fileset['file5'] != None:
+                        elif fileset['file5'] != None and fileset['file5'] != '':
                             node5 = tree.insert(
                                 fileset['file1'] + ' ' + fileset['file2'] + ' ' + fileset['file3'] + ' ' + fileset[
                                     'file4'],
                                 len(a4) - 1,
                                 fileset['file1'] + ' ' + fileset['file2'] + ' ' + fileset['file3'] + ' ' + fileset[
-                                    'file4'] + ' ' + fileset['file5'], open=False, text=fileset['file5'])
+                                    'file4'] + ' ' + fileset['file5'], open=True, text=fileset['file5'])
                             a5 = a4.add_child(fileset['file5'])
-                            if fileset['file6'] != None:
+                            if fileset['file6'] != None and fileset['file6'] != '':
                                 node6 = tree.insert(
                                     fileset['file1'] + ' ' + fileset['file2'] + ' ' + fileset['file3'] + ' ' + fileset[
                                         'file4'] + ' ' + fileset['file5'], len(a5) - 1,
                                     fileset['file1'] + ' ' + fileset['file2'] + ' ' + fileset['file3'] + ' ' + fileset[
-                                        'file4'] + ' ' + fileset['file5'] + ' ' + fileset['file6'], open=False,
+                                        'file4'] + ' ' + fileset['file5'] + ' ' + fileset['file6'], open=True,
                                     text=fileset['file6'])
                                 a6 = a5.add_child(fileset['file6'])
-                                if fileset['file7'] != None:
+                                if fileset['file7'] != None and fileset['file7'] != '':
                                     node7 = tree.insert(
                                         fileset['file1'] + ' ' + fileset['file2'] + ' ' + fileset['file3'] + ' ' +
                                         fileset[
@@ -136,41 +152,41 @@ def generate_guitree(tree,myid0, list,domain):
                                         fileset['file1'] + ' ' + fileset['file2'] + ' ' + fileset['file3'] + ' ' +
                                         fileset[
                                             'file4'] + ' ' + fileset['file5'] + ' ' + fileset['file6'] + ' ' + fileset[
-                                            'file7'], open=False, text=fileset['file7'])
+                                            'file7'], open=True, text=fileset['file7'])
                                     a7 = a6.add_child(fileset['file7'])
-                                    if fileset['file8'] != None:
+                                    if fileset['file8'] != None and fileset['file8'] != '':
                                         node8 = tree.insert(
                                             fileset['file1'] + ' ' + fileset['file2'] + ' ' + fileset['file3'] + ' ' +
                                             fileset['file4'] + ' ' + fileset['file5'] + ' ' + fileset['file6'] + ' ' +
                                             fileset['file7'], len(a7) - 1,
                                             fileset['file1'] + ' ' + fileset['file2'] + ' ' + fileset['file3'] + ' ' +
                                             fileset['file4'] + ' ' + fileset['file5'] + ' ' + fileset['file6'] + ' ' +
-                                            fileset['file7'] + ' ' + fileset['file8'], open=False,
+                                            fileset['file7'] + ' ' + fileset['file8'], open=True,
                                             text=fileset['file8'])
                                         a8 = a7.add_child(fileset['file8'])
-                    elif fileset['file4'] != None:
+                    elif fileset['file4'] != None and fileset['file4'] != '':
                         node4 = tree.insert(fileset['file1'] + ' ' + fileset['file2'] + ' ' + fileset['file3'],
                                             len(a3) - 1,
                                             fileset['file1'] + ' ' + fileset['file2'] + ' ' + fileset['file3'] + ' ' +
-                                            fileset['file4'], open=False, text=fileset['file4'])
+                                            fileset['file4'], open=True, text=fileset['file4'])
                         a4 = a3.add_child(fileset['file4'])
-                        if fileset['file5'] != None:
+                        if fileset['file5'] != None and fileset['file5'] != '':
                             node5 = tree.insert(
                                 fileset['file1'] + ' ' + fileset['file2'] + ' ' + fileset['file3'] + ' ' + fileset[
                                     'file4'],
                                 len(a4) - 1,
                                 fileset['file1'] + ' ' + fileset['file2'] + ' ' + fileset['file3'] + ' ' + fileset[
-                                    'file4'] + ' ' + fileset['file5'], open=False, text=fileset['file5'])
+                                    'file4'] + ' ' + fileset['file5'], open=True, text=fileset['file5'])
                             a5 = a4.add_child(fileset['file5'])
-                            if fileset['file6'] != None:
+                            if fileset['file6'] != None and fileset['file6'] != '':
                                 node6 = tree.insert(
                                     fileset['file1'] + ' ' + fileset['file2'] + ' ' + fileset['file3'] + ' ' + fileset[
                                         'file4'] + ' ' + fileset['file5'], len(a5) - 1,
                                     fileset['file1'] + ' ' + fileset['file2'] + ' ' + fileset['file3'] + ' ' + fileset[
-                                        'file4'] + ' ' + fileset['file5'] + ' ' + fileset['file6'], open=False,
+                                        'file4'] + ' ' + fileset['file5'] + ' ' + fileset['file6'], open=True,
                                     text=fileset['file6'])
                                 a6 = a5.add_child(fileset['file6'])
-                                if fileset['file7'] != None:
+                                if fileset['file7'] != None and fileset['file7'] != '':
                                     node7 = tree.insert(
                                         fileset['file1'] + ' ' + fileset['file2'] + ' ' + fileset['file3'] + ' ' +
                                         fileset[
@@ -178,46 +194,46 @@ def generate_guitree(tree,myid0, list,domain):
                                         fileset['file1'] + ' ' + fileset['file2'] + ' ' + fileset['file3'] + ' ' +
                                         fileset[
                                             'file4'] + ' ' + fileset['file5'] + ' ' + fileset['file6'] + ' ' + fileset[
-                                            'file7'], open=False, text=fileset['file7'])
+                                            'file7'], open=True, text=fileset['file7'])
                                     a7 = a6.add_child(fileset['file7'])
-                                    if fileset['file8'] != None:
+                                    if fileset['file8'] != None and fileset['file8'] != '':
                                         node8 = tree.insert(
                                             fileset['file1'] + ' ' + fileset['file2'] + ' ' + fileset['file3'] + ' ' +
                                             fileset['file4'] + ' ' + fileset['file5'] + ' ' + fileset['file6'] + ' ' +
                                             fileset['file7'], len(a7) - 1,
                                             fileset['file1'] + ' ' + fileset['file2'] + ' ' + fileset['file3'] + ' ' +
                                             fileset['file4'] + ' ' + fileset['file5'] + ' ' + fileset['file6'] + ' ' +
-                                            fileset['file7'] + ' ' + fileset['file8'], open=False,
+                                            fileset['file7'] + ' ' + fileset['file8'], open=True,
                                             text=fileset['file8'])
                                         a8 = a7.add_child(fileset['file8'])
-                elif fileset['file3'] != None:
+                elif fileset['file3'] != None and fileset['file3'] != '':
                     node3 = tree.insert(fileset['file1'] + ' ' + fileset['file2'], len(a2) - 1,
-                                        fileset['file1'] + ' ' + fileset['file2'] + ' ' + fileset['file3'], open=False,
+                                        fileset['file1'] + ' ' + fileset['file2'] + ' ' + fileset['file3'], open=True,
                                         text=fileset['file3'])
                     a3 = a2.add_child(fileset['file3'])
-                    if fileset['file4'] != None:
+                    if fileset['file4'] != None and fileset['file4'] != '':
                         node4 = tree.insert(fileset['file1'] + ' ' + fileset['file2'] + ' ' + fileset['file3'],
                                             len(a3) - 1,
                                             fileset['file1'] + ' ' + fileset['file2'] + ' ' + fileset['file3'] + ' ' +
-                                            fileset['file4'], open=False, text=fileset['file4'])
+                                            fileset['file4'], open=True, text=fileset['file4'])
                         a4 = a3.add_child(fileset['file4'])
-                        if fileset['file5'] != None:
+                        if fileset['file5'] != None and fileset['file5'] != '':
                             node5 = tree.insert(
                                 fileset['file1'] + ' ' + fileset['file2'] + ' ' + fileset['file3'] + ' ' + fileset[
                                     'file4'],
                                 len(a4) - 1,
                                 fileset['file1'] + ' ' + fileset['file2'] + ' ' + fileset['file3'] + ' ' + fileset[
-                                    'file4'] + ' ' + fileset['file5'], open=False, text=fileset['file5'])
+                                    'file4'] + ' ' + fileset['file5'], open=True, text=fileset['file5'])
                             a5 = a4.add_child(fileset['file5'])
-                            if fileset['file6'] != None:
+                            if fileset['file6'] != None and fileset['file6'] != '':
                                 node6 = tree.insert(
                                     fileset['file1'] + ' ' + fileset['file2'] + ' ' + fileset['file3'] + ' ' + fileset[
                                         'file4'] + ' ' + fileset['file5'], len(a5) - 1,
                                     fileset['file1'] + ' ' + fileset['file2'] + ' ' + fileset['file3'] + ' ' + fileset[
-                                        'file4'] + ' ' + fileset['file5'] + ' ' + fileset['file6'], open=False,
+                                        'file4'] + ' ' + fileset['file5'] + ' ' + fileset['file6'], open=True,
                                     text=fileset['file6'])
                                 a6 = a5.add_child(fileset['file6'])
-                                if fileset['file7'] != None:
+                                if fileset['file7'] != None and fileset['file7'] != '':
                                     node7 = tree.insert(
                                         fileset['file1'] + ' ' + fileset['file2'] + ' ' + fileset['file3'] + ' ' +
                                         fileset[
@@ -225,51 +241,51 @@ def generate_guitree(tree,myid0, list,domain):
                                         fileset['file1'] + ' ' + fileset['file2'] + ' ' + fileset['file3'] + ' ' +
                                         fileset[
                                             'file4'] + ' ' + fileset['file5'] + ' ' + fileset['file6'] + ' ' + fileset[
-                                            'file7'], open=False, text=fileset['file7'])
+                                            'file7'], open=True, text=fileset['file7'])
                                     a7 = a6.add_child(fileset['file7'])
-                                    if fileset['file8'] != None:
+                                    if fileset['file8'] != None and fileset['file8'] != '':
                                         node8 = tree.insert(
                                             fileset['file1'] + ' ' + fileset['file2'] + ' ' + fileset['file3'] + ' ' +
                                             fileset['file4'] + ' ' + fileset['file5'] + ' ' + fileset['file6'] + ' ' +
                                             fileset['file7'], len(a7) - 1,
                                             fileset['file1'] + ' ' + fileset['file2'] + ' ' + fileset['file3'] + ' ' +
                                             fileset['file4'] + ' ' + fileset['file5'] + ' ' + fileset['file6'] + ' ' +
-                                            fileset['file7'] + ' ' + fileset['file8'], open=False,
+                                            fileset['file7'] + ' ' + fileset['file8'], open=True,
                                             text=fileset['file8'])
                                         a8 = a7.add_child(fileset['file8'])
-            elif fileset['file2'] != None:
+            elif fileset['file2'] != None and fileset['file2'] != '':
                 node2 = tree.insert(fileset['file1'], len(a1) - 1, fileset['file1'] + ' ' + fileset['file2'],
-                                    open=False,
+                                    open=True,
                                     text=fileset['file2'])
                 a2 = a1.add_child(fileset['file2'])
-                if fileset['file3'] != None:
+                if fileset['file3'] != None and fileset['file3'] != '':
                     node3 = tree.insert(fileset['file1'] + ' ' + fileset['file2'], len(a2) - 1,
-                                        fileset['file1'] + ' ' + fileset['file2'] + ' ' + fileset['file3'], open=False,
+                                        fileset['file1'] + ' ' + fileset['file2'] + ' ' + fileset['file3'], open=True,
                                         text=fileset['file3'])
                     a3 = a2.add_child(fileset['file3'])
-                    if fileset['file4'] != None:
+                    if fileset['file4'] != None and fileset['file4'] != '':
                         node4 = tree.insert(fileset['file1'] + ' ' + fileset['file2'] + ' ' + fileset['file3'],
                                             len(a3) - 1,
                                             fileset['file1'] + ' ' + fileset['file2'] + ' ' + fileset['file3'] + ' ' +
-                                            fileset['file4'], open=False, text=fileset['file4'])
+                                            fileset['file4'], open=True, text=fileset['file4'])
                         a4 = a3.add_child(fileset['file4'])
-                        if fileset['file5'] != None:
+                        if fileset['file5'] != None and fileset['file5'] != '':
                             node5 = tree.insert(
                                 fileset['file1'] + ' ' + fileset['file2'] + ' ' + fileset['file3'] + ' ' + fileset[
                                     'file4'],
                                 len(a4) - 1,
                                 fileset['file1'] + ' ' + fileset['file2'] + ' ' + fileset['file3'] + ' ' + fileset[
-                                    'file4'] + ' ' + fileset['file5'], open=False, text=fileset['file5'])
+                                    'file4'] + ' ' + fileset['file5'], open=True, text=fileset['file5'])
                             a5 = a4.add_child(fileset['file5'])
-                            if fileset['file6'] != None:
+                            if fileset['file6'] != None and fileset['file6'] != '':
                                 node6 = tree.insert(
                                     fileset['file1'] + ' ' + fileset['file2'] + ' ' + fileset['file3'] + ' ' + fileset[
                                         'file4'] + ' ' + fileset['file5'], len(a5) - 1,
                                     fileset['file1'] + ' ' + fileset['file2'] + ' ' + fileset['file3'] + ' ' + fileset[
-                                        'file4'] + ' ' + fileset['file5'] + ' ' + fileset['file6'], open=False,
+                                        'file4'] + ' ' + fileset['file5'] + ' ' + fileset['file6'], open=True,
                                     text=fileset['file6'])
                                 a6 = a5.add_child(fileset['file6'])
-                                if fileset['file7'] != None:
+                                if fileset['file7'] != None and fileset['file7'] != '':
                                     node7 = tree.insert(
                                         fileset['file1'] + ' ' + fileset['file2'] + ' ' + fileset['file3'] + ' ' +
                                         fileset[
@@ -277,55 +293,55 @@ def generate_guitree(tree,myid0, list,domain):
                                         fileset['file1'] + ' ' + fileset['file2'] + ' ' + fileset['file3'] + ' ' +
                                         fileset[
                                             'file4'] + ' ' + fileset['file5'] + ' ' + fileset['file6'] + ' ' + fileset[
-                                            'file7'], open=False, text=fileset['file7'])
+                                            'file7'], open=True, text=fileset['file7'])
                                     a7 = a6.add_child(fileset['file7'])
-                                    if fileset['file8'] != None:
+                                    if fileset['file8'] != None and fileset['file8'] != '':
                                         node8 = tree.insert(
                                             fileset['file1'] + ' ' + fileset['file2'] + ' ' + fileset['file3'] + ' ' +
                                             fileset['file4'] + ' ' + fileset['file5'] + ' ' + fileset['file6'] + ' ' +
                                             fileset['file7'], len(a7) - 1,
                                             fileset['file1'] + ' ' + fileset['file2'] + ' ' + fileset['file3'] + ' ' +
                                             fileset['file4'] + ' ' + fileset['file5'] + ' ' + fileset['file6'] + ' ' +
-                                            fileset['file7'] + ' ' + fileset['file8'], open=False,
+                                            fileset['file7'] + ' ' + fileset['file8'], open=True,
                                             text=fileset['file8'])
                                         a8 = a7.add_child(fileset['file8'])
         elif id != None:
-            node1 = tree.insert(myid0, 0, fileset['file1'], open=False, text=fileset['file1'])
+            node1 = tree.insert(myid0, 0, fileset['file1'], open=True, text=fileset['file1'])
             a1 = treenode.add_child(fileset['file1'])
-            if fileset['file2'] != None:
+            if fileset['file2'] != None and fileset['file2'] != '':
 
                 node2 = tree.insert(fileset['file1'], len(a1) - 1, fileset['file1'] + ' ' + fileset['file2'],
-                                    open=False,
+                                    open=True,
                                     text=fileset['file2'])
                 a2 = a1.add_child(fileset['file2'])
-                if fileset['file3'] != None:
+                if fileset['file3'] != None and fileset['file3'] != '':
                     node3 = tree.insert(fileset['file1'] + ' ' + fileset['file2'], len(a2) - 1,
-                                        fileset['file1'] + ' ' + fileset['file2'] + ' ' + fileset['file3'], open=False,
+                                        fileset['file1'] + ' ' + fileset['file2'] + ' ' + fileset['file3'], open=True,
                                         text=fileset['file3'])
                     a3 = a2.add_child(fileset['file3'])
-                    if fileset['file4'] != None:
+                    if fileset['file4'] != None and fileset['file4'] != '':
                         node4 = tree.insert(fileset['file1'] + ' ' + fileset['file2'] + ' ' + fileset['file3'],
                                             len(a3) - 1,
                                             fileset['file1'] + ' ' + fileset['file2'] + ' ' + fileset['file3'] + ' ' +
-                                            fileset['file4'], open=False, text=fileset['file4'])
+                                            fileset['file4'], open=True, text=fileset['file4'])
                         a4 = a3.add_child(fileset['file4'])
-                        if fileset['file5'] != None:
+                        if fileset['file5'] != None and fileset['file5'] != '':
                             node5 = tree.insert(
                                 fileset['file1'] + ' ' + fileset['file2'] + ' ' + fileset['file3'] + ' ' + fileset[
                                     'file4'],
                                 len(a4) - 1,
                                 fileset['file1'] + ' ' + fileset['file2'] + ' ' + fileset['file3'] + ' ' + fileset[
-                                    'file4'] + ' ' + fileset['file5'], open=False, text=fileset['file5'])
+                                    'file4'] + ' ' + fileset['file5'], open=True, text=fileset['file5'])
                             a5 = a4.add_child(fileset['file5'])
-                            if fileset['file6'] != None:
+                            if fileset['file6'] != None and fileset['file6'] != '':
                                 node6 = tree.insert(
                                     fileset['file1'] + ' ' + fileset['file2'] + ' ' + fileset['file3'] + ' ' + fileset[
                                         'file4'] + ' ' + fileset['file5'], len(a5) - 1,
                                     fileset['file1'] + ' ' + fileset['file2'] + ' ' + fileset['file3'] + ' ' + fileset[
-                                        'file4'] + ' ' + fileset['file5'] + ' ' + fileset['file6'], open=False,
+                                        'file4'] + ' ' + fileset['file5'] + ' ' + fileset['file6'], open=True,
                                     text=fileset['file6'])
                                 a6 = a5.add_child(fileset['file6'])
-                                if fileset['file7'] != None:
+                                if fileset['file7'] != None and fileset['file7'] != '':
                                     node7 = tree.insert(
                                         fileset['file1'] + ' ' + fileset['file2'] + ' ' + fileset['file3'] + ' ' +
                                         fileset[
@@ -333,16 +349,16 @@ def generate_guitree(tree,myid0, list,domain):
                                         fileset['file1'] + ' ' + fileset['file2'] + ' ' + fileset['file3'] + ' ' +
                                         fileset[
                                             'file4'] + ' ' + fileset['file5'] + ' ' + fileset['file6'] + ' ' + fileset[
-                                            'file7'], open=False, text=fileset['file7'])
+                                            'file7'], open=True, text=fileset['file7'])
                                     a7 = a6.add_child(fileset['file7'])
-                                    if fileset['file8'] != None:
+                                    if fileset['file8'] != None and fileset['file8'] != '':
                                         node8 = tree.insert(
                                             fileset['file1'] + ' ' + fileset['file2'] + ' ' + fileset['file3'] + ' ' +
                                             fileset['file4'] + ' ' + fileset['file5'] + ' ' + fileset['file6'] + ' ' +
                                             fileset['file7'], len(a7) - 1,
                                             fileset['file1'] + ' ' + fileset['file2'] + ' ' + fileset['file3'] + ' ' +
                                             fileset['file4'] + ' ' + fileset['file5'] + ' ' + fileset['file6'] + ' ' +
-                                            fileset['file7'] + ' ' + fileset['file8'], open=False,
+                                            fileset['file7'] + ' ' + fileset['file8'], open=True,
                                             text=fileset['file8'])
                                         a8 = a7.add_child(fileset['file8'])
     treenode.dump()
@@ -359,7 +375,7 @@ def main(tree):
         sitefile_tree(list, url)
         linkth = linkth+1
         url = select_db(db_cur, linkth)
-    myid0 = tree.insert("", 0, domain, text=domain, values=("1"))
+    myid0 = tree.insert("", 0, domain, open = True, text=domain, values=("1"))
     generate_guitree(tree,myid0,list,domain)
     tree.pack()
 

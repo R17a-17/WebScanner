@@ -30,7 +30,7 @@ class Histogram:
     def create_matplotlib(self):
         # 创建绘图对象f
         #使用num避免同时出现两张图时无法正常显示
-        f = plt.figure(num=2, figsize=(5, 4), dpi=80, facecolor="WhiteSmoke", edgecolor='green', frameon=True)
+        f = plt.figure(num=2, figsize=(6, 4), dpi=80, facecolor="WhiteSmoke", edgecolor='green', frameon=True)
         # 创建一副子图
         # fig1 = plt.subplot(1, 1, 1)
 
@@ -80,5 +80,5 @@ if __name__ == "__main__":
     root = tk.Tk()
     frame = tk.Frame(root)
     frame.pack()
-    main(frame,(0,0,0,0,0))
+    main(frame,(2,5,7,9,10))
     root.mainloop()

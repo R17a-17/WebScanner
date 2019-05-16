@@ -1,6 +1,6 @@
-# --Created by WD
-# python 3.6
-# coding:utf-8
+#--Created by WD
+#python 3.6
+#coding:utf-8
 
 from scrapy import *
 from scrapy.linkextractors import LinkExtractor
@@ -14,7 +14,7 @@ class LinkSpider(Spider):
     '''根据指定的目标爬取网站的所有链接'''
 
     # 给爬虫命名
-    name = 'LinkSpider'
+    name = 'FingerprintSpider'
     # 为每个spider指定对应的pipelines
     custom_settings = {
         'ITEM_PIPELINES': {'WebScanner.pipelines_mysqldb_linktable.LinkPipeline': 300}
@@ -44,18 +44,17 @@ class LinkSpider(Spider):
         '''重写starturl的请求'''
 
         # 设置cookie便于访问登录后的页面
-        self.cookie = settings['COOKIES']
-        yield Request(self.start_urls[0], callback=self.get_parse, cookies=self.cookie)
+        yield Request(self.start_urls[0], callback=self.parse)
 
-    def get_parse(self, response):
+    def parse(self, response):
         # 连接数据库
         # db = conn.connsql()
         # 使用cursor()方法获取操作游标
         # cursor = db.cursor()
 
         # 提取开始链接的页面中 所有属于目标域的URL
-        deny_parttern = '.+(delete|remove|stop|undeploy|reload|restart|' \
-                        'logout|signout|logoff|signoff|exit|quit|byebye|bye-bye|clearuser|invalidate|setup|reset).+'
+        fingerprint_parttern1 = '.+(?P<parameter>(X-Powered-By)):.+(?P<value>).+'
+        fingerprint_parttern2 = '.+(?P<parameter>(Server)):.+(?P<value>(A-Za-z0-9.)*).+'
         links = LinkExtractor(allow_domains=self.allow_domain, deny=deny_parttern).extract_links(response)
 
         # 将提取的链接插入数据库
@@ -72,39 +71,6 @@ class LinkSpider(Spider):
             yield Request(next_url, callback=self.parse, cookies=self.cookie)
         else:
             self.db_conn.close()
-
-
-    def form_parse(self, response):
-        # 连接数据库
-        # db = conn.connsql()
-        # 使用cursor()方法获取操作游标
-        # cursor = db.cursor()
-
-        # 提取开始链接的页面中 所有属于目标域的URL
-        deny_parttern = '.+(delete|remove|stop|undeploy|reload|restart|' \
-                        'logout|signout|logoff|signoff|exit|quit|byebye|bye-bye|clearuser|invalidate|setup|reset).+'
-        links = LinkExtractor(allow_domains=self.allow_domain, deny=deny_parttern).extract_links(response)
-
-        # 将提取的链接插入数据库
-        for link in links:
-            linkitem = LinkItem()
-            linkitem['link'] = link.url
-            yield linkitem
-
-        next_url = self.select_db(self.linkth)
-
-        if next_url and self.linkth < self.max_crawl:
-            self.linkth = self.linkth + 1
-            # 如果找到下一页的URL，构造新的Request 对象
-            yield Request(next_url, callback=self.parse, cookies=self.cookie)
-        else:
-            self.db_conn.close()
-
-
-
-
-
-#######################################################
 
     def select_db(self, linkth):
         '''查询链接'''

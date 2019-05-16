@@ -7,7 +7,6 @@ from pymysql import *
 import re
 import random
 from scrapy.conf import settings
-from scrapy.http import Response
 import datetime
 import requests
 from WebScanner.item_sqli import SqliItem
@@ -54,8 +53,8 @@ class SqliSpider(Spider):
             if self.level == 1:
                 list = self.sqli_error_check(response.body)
                 if list[0]:
-                    print(r'存在sqli漏洞:报错注入,数据库：', list[1])
                     db = list[1]
+                    print('>>>'+self.url + 'SQLI:' + db + ' error based')
                     self.linkth = self.linkth + 1
                     self.level = 1
                     vulntype = 'SQLI:'+ db +' error based'
@@ -70,7 +69,7 @@ class SqliSpider(Spider):
                 htmllist = self.boolean_getdetect()
                 if self.sqli_boolean_check(htmllist[0], htmllist[1]):
                     self.linkth = self.linkth + 1
-                    print(r'存在sqli漏洞：数字型布尔注入！')
+                    print('>>>'+ self.url + '\nSQLI:int boolean injection')
                     self.level = 1
                     sqliitem = SqliItem()
                     sqliitem['vulnurl'] = self.url
@@ -81,7 +80,7 @@ class SqliSpider(Spider):
                     htmllist = self.boolean_getdetect()
                     if self.sqli_boolean_check(htmllist[0], htmllist[1]):
                         self.linkth = self.linkth + 1
-                        print(r'存在sqli漏洞：字符型布尔注入！')
+                        print('>>>' + self.url + '\nSQLI:char boolean injection')
                         self.level = 1
                         sqliitem = SqliItem()
                         sqliitem['vulnurl'] = self.url
@@ -92,7 +91,7 @@ class SqliSpider(Spider):
                         htmllist = self.boolean_getdetect()
                         if self.sqli_boolean_check(htmllist[0], htmllist[1]):
                             self.linkth = self.linkth + 1
-                            print(r'存在sqli漏洞：搜索型布尔注入！')
+                            print('>>>' + self.url + '\nSQLI:search boolean injection')
                             self.level = 1
                             sqliitem = SqliItem()
                             sqliitem['vulnurl'] = self.url
@@ -110,7 +109,7 @@ class SqliSpider(Spider):
                 endtime = datetime.datetime.now()
                 if self.sqli_time_check((endtime - starttime).seconds):
                     self.linkth = self.linkth + 1
-                    print(r'存在sqli漏洞：基于时间的盲注！')
+                    print('>>>'+self.url + '\nSQLI:time based')
                     self.level = 1
                     sqliitem = SqliItem()
                     sqliitem['vulnurl'] = self.url
@@ -118,17 +117,16 @@ class SqliSpider(Spider):
                     yield sqliitem
                 else:
                     self.level = 1
-                    print(r'不存在sqli漏洞!')
+                    print('>>>no sqli')
                     self.linkth = self.linkth + 1
         else:
-            print(r'不存在sqli漏洞')
+            print('>>>no injection point')
             self.linkth = self.linkth + 1
 
         self.url = self.geturlfrommysql(self.linkth)
 
         if self.url:
             self.url = self.sqli_detect()
-            print("正在测试第%d个url"%self.linkth)
             # 如果找到下一页的URL，构造新的Request 对象
             yield Request(self.url, callback=self.parse, cookies = self.cookie)
 
@@ -162,7 +160,6 @@ class SqliSpider(Spider):
             #替换前字符串
             oldstr = parameter + '=' + value
             generate_func = ''
-            print("Scanning %s for sqli in parameter '%s'" % (url, parameter))
             #根据level等级生成探测码
             if self.level == 1:
                 generate_func = 'self.generate_detectcode_error'
@@ -209,7 +206,6 @@ class SqliSpider(Spider):
         for db, errors in SQLI_ERRORS.items():
             for error in errors:
                 if re.compile(error).search(body):
-                    # print "\n" + db
                     return True, db
         return False, None
 

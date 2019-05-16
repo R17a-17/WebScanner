@@ -40,14 +40,12 @@ class LinkPipeline:
 
     def insert_db(self, tx, item):
         '''将item插入数据库的具体操作'''
-        print('!!!!!!!!!!!!!!!!!!!!!!!!')
         values = (
             item['link'],
         )
         sql = 'INSERT INTO t_link_tmp(link) VALUES (%s)'
         # sql = 'INSERT INTO t_link_tmp(link) SELECT %s FROM DUAL WHERE NOT EXISTS(SELECT link from t_link_tmp where link = %s)'
         try:
-            print('SSSSSSSSSSSSSSSSSSSSSSSSSSSS')
             tx.execute(sql, values)
         except:
             pass
