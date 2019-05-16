@@ -13,6 +13,8 @@ from WebScanner.items_link import LinkItem
 
 class LinkPipeline:
     '''处理linkitem的链接，将所有爬取到的链接插入数据库'''
+    id = 1
+
     def open_spider(self, spider):
         ''' adbapi.ConnectionPool方法可以创建一个数据库连接池对象，其中包含多个连接对象，
         每个连接对象在独立的线程中工作。adbapi只是提供了异步访问数据库的编程框架，在其
@@ -41,11 +43,14 @@ class LinkPipeline:
     def insert_db(self, tx, item):
         '''将item插入数据库的具体操作'''
         values = (
+            self.id,
             item['link'],
         )
-        sql = 'INSERT INTO t_link_tmp(link) VALUES (%s)'
+        sql = 'INSERT INTO t_link_tmp(id,link) VALUES (%s,%s)'
         # sql = 'INSERT INTO t_link_tmp(link) SELECT %s FROM DUAL WHERE NOT EXISTS(SELECT link from t_link_tmp where link = %s)'
         try:
+            self.id = self.id + 1
             tx.execute(sql, values)
         except:
+            self.id = self.id -1
             pass
