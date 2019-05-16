@@ -114,6 +114,7 @@ class ThreadClient():
                 self.get_cmdoutput(popen)
                 popen.communicate()
                 # os.system('scrapy crawl LinkSpider -a start_url=' + self.gui.tgtEntry.get())
+                self.gui.Resultlist.insert(tk.END, "正在爬取目标网页\n")
                 popen1 = subprocess.Popen('scrapy crawl LinkSpider -a start_url=' + self.gui.tgtEntry.get(),
                     stdout=subprocess.PIPE)
                 self.get_cmdoutput(popen1)
@@ -138,6 +139,7 @@ class ThreadClient():
                 self.get_cmdoutput(popen)
                 popen.communicate()
                 # os.system('scrapy crawl LinkSpider -a start_url=' + self.gui.tgtEntry.get())
+                self.gui.Resultlist.insert(tk.END, "正在爬取目标网页\n")
                 popen1 = subprocess.Popen('scrapy crawl LinkSpider -a start_url=' + self.gui.tgtEntry.get(),
                     stdout=subprocess.PIPE)
                 self.get_cmdoutput(popen1)
@@ -161,6 +163,7 @@ class ThreadClient():
             elif self.gui.cmd == 'scrapy crawl VulndetectSpider':
                 self.gui.Resultlist.insert(tk.END, "##########正在对目标进行综合扫描探测##########\n")
                 # os.system('scrapy crawl LinkSpider -a start_url=' + self.gui.tgtEntry.get())
+                self.gui.Resultlist.insert(tk.END, "正在爬取目标网页\n")
                 popen1 = subprocess.Popen('scrapy crawl LinkSpider -a start_url=' + self.gui.tgtEntry.get(),
                                           stdout=subprocess.PIPE)
                 self.get_cmdoutput(popen1)
@@ -180,6 +183,7 @@ class ThreadClient():
             else:
                 self.gui.Resultlist.insert(tk.END, "##########正在对目标进行" + self.gui.comboxlist.get() + "探测##########\n")
                 # os.system('scrapy crawl LinkSpider -a start_url=' + self.gui.tgtEntry.get())
+                self.gui.Resultlist.insert(tk.END, "正在爬取目标网页\n")
                 popen1 = subprocess.Popen('scrapy crawl LinkSpider -a start_url=' + self.gui.tgtEntry.get(),
                                           stdout=subprocess.PIPE)
                 self.get_cmdoutput(popen1)

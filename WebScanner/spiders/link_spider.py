@@ -61,7 +61,7 @@ class TestSpider(Spider):
 
         # 提取开始链接的页面中 所有属于目标域的URL
         deny_parttern = '.+(delete|remove|stop|undeploy|reload|restart|' \
-                        'logout|signout|logoff|signoff|exit|quit|byebye|bye-bye|clearuser|invalidate|setup|reset).+'
+                        'logout|signout|logoff|signoff|exit|quit|byebye|bye-bye|clearuser|invalidate|setup|reset|csrf|log).+'
         links = LinkExtractor(allow_domains=self.allow_domain, deny=deny_parttern).extract_links(response)
 
         # 将提取的链接插入数据库

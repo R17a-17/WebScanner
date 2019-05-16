@@ -56,19 +56,19 @@ class XssSpider(Spider):
             if self.xss_response_check(response.body):
                 self.linkth = self.linkth + 1
                 if self.level == 1:
-                    print('>>>' +self.url + '\nXSS:JavaScript messagebox injection')
+                    print('>>>XSS:JavaScript messagebox injection')
                     xssitem = XssItem()
                     xssitem['vulnurl'] = self.url
                     xssitem['vulntype'] = 'XSS:JavaScript messagebox injection'
                     yield xssitem
                 elif self.level == 2:
-                    print('>>>' + self.url + '\nXSS:HTML tag injection')
+                    print('>>>XSS:HTML tag injection')
                     xssitem = XssItem()
                     xssitem['vulnurl'] = self.url
                     xssitem['vulntype'] = 'XSS:HTML tag injection'
                     yield xssitem
                 elif self.level == 3:
-                    print('>>>' + self.url + '\nXSS:JavaScript trigger event callback injection')
+                    print('>>>XSS:JavaScript trigger event callback injection')
                     xssitem = XssItem()
                     xssitem['vulnurl'] = self.url
                     xssitem['vulntype'] = 'XSS:JavaScript trigger event callback injection'
@@ -88,7 +88,7 @@ class XssSpider(Spider):
         if self.url:
             self.url = self.xss_detect()
             # 如果找到下一页的URL，构造新的Request 对象
-            yield Request(self.url, callback=self.parse, cookies = self.cookie)
+            yield Request(self.url, callback=self.parse, cookies = self.cookie, dont_filter=True)
 
 
 
@@ -107,13 +107,13 @@ class XssSpider(Spider):
         if len(list) >=1:
             # 获取随机数，达到随机获取其中一个参数进行测试
             parameter_num = random.randint(0, len(list)-1)
-            parameter = list[parameter_num]['parameter']
+            parameter = list[0]['parameter']
             value = list[parameter_num]['value']
             #替换前字符串
             oldstr = parameter + '=' + value
             #根据level等级生成探测码
             self.detect_code = eval('self.generate_detectcode_level' + str(self.level))()
-            value = value + self.detect_code
+            value = self.detect_code
             #参数和探测值生成新的字符串
             newstr = parameter + '=' + value
             #将url替换成探测url

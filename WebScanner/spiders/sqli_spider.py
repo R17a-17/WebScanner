@@ -128,7 +128,7 @@ class SqliSpider(Spider):
         if self.url:
             self.url = self.sqli_detect()
             # 如果找到下一页的URL，构造新的Request 对象
-            yield Request(self.url, callback=self.parse, cookies = self.cookie)
+            yield Request(self.url, callback=self.parse, cookies = self.cookie,dont_filter=True)
 
     def boolean_getdetect(self):
         self.url = self.geturlfrommysql(self.linkth)

@@ -28,8 +28,8 @@ class Weakpwd_Spider(Spider):
         '''重写starturl的请求'''
         # 开始url
         print('>>>WebScanner正在扫描弱口令漏洞...')
-        self.start_urls = []
-        self.start_urls.append(self.url)
+        # self.start_urls = []
+        # self.start_urls.append(self.url)
         yield Request(self.start_urls[0], callback=self.parse)
 
 
@@ -60,7 +60,8 @@ class Weakpwd_Spider(Spider):
     def after_login(self, response):
         '''check login succeed before going on'''
         if re.match(".+login.+",response.url) != None or response.url == self.loginurl:
-            print(r'>>>Login failed')
+            print(self.password)
+            # print(r'>>>Login failed')
             self.passth = self.passth + 1
             yield Request(self.start_urls[0], callback=self.parse, dont_filter = True)
         else:
