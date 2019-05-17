@@ -3,13 +3,23 @@
   <component name="ChangeListManager">
     <list default="true" id="67e6a3da-3c00-425b-96d1-b2aae069c378" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/WebScanner/GUI/Gui_main.py" beforeDir="false" afterPath="$PROJECT_DIR$/WebScanner/GUI/Gui_main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/WebScanner/Vulnerability_policy_Library/WeakPd/pass_list.py" beforeDir="false" afterPath="$PROJECT_DIR$/WebScanner/Vulnerability_policy_Library/WeakPd/pass_list.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/WebScanner/cmd/test111.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/WebScanner/spiders/link_spider.py" beforeDir="false" afterPath="$PROJECT_DIR$/WebScanner/spiders/link_spider.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/WebScanner/spiders/sqli_spider.py" beforeDir="false" afterPath="$PROJECT_DIR$/WebScanner/spiders/sqli_spider.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/WebScanner/spiders/weakpwd_spider.py" beforeDir="false" afterPath="$PROJECT_DIR$/WebScanner/spiders/weakpwd_spider.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/WebScanner/spiders/xss_spider.py" beforeDir="false" afterPath="$PROJECT_DIR$/WebScanner/spiders/xss_spider.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/WebScanner/GUI/1.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/WebScanner/GUI/11.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/WebScanner/GUI/13.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/WebScanner/GUI/14.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/WebScanner/GUI/2.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/WebScanner/GUI/3.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/WebScanner/GUI/4.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/WebScanner/GUI/5.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/WebScanner/GUI/6.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/WebScanner/GUI/7.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/WebScanner/GUI/8.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/WebScanner/GUI/9.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/WebScanner/Report/word.py" beforeDir="false" afterPath="$PROJECT_DIR$/WebScanner/Report/word.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/WebScanner/img/Webscanner.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/WebScanner/img/Webscanner.xmind" beforeDir="false" afterPath="$PROJECT_DIR$/WebScanner/img/Webscanner.xmind" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/WebScanner/img/XSS_Detect.png" beforeDir="false" afterPath="$PROJECT_DIR$/WebScanner/img/XSS_Detect.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/WebScanner/spiders/crlf_spider.py" beforeDir="false" afterPath="$PROJECT_DIR$/WebScanner/spiders/crlf_spider.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -74,10 +84,10 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/WebScanner/GUI/GuiApplication.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="2225">
+            <state relative-caret-position="375">
               <caret line="99" selection-start-line="99" selection-end-line="99" />
               <folding>
                 <element signature="e#80#100#0" expanded="true" />
@@ -87,85 +97,59 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/WebScanner/spiders/fingerprint_spider.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="275">
-              <caret line="56" column="88" selection-start-line="56" selection-start-column="88" selection-end-line="56" selection-end-column="88" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/WebScanner/spiders/link_spider.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="350">
-              <caret line="74" column="37" lean-forward="true" selection-start-line="74" selection-start-column="37" selection-end-line="74" selection-end-column="37" />
-              <folding>
-                <element signature="e#47#67#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$APPLICATION_CONFIG_DIR$/consoles/db/1ddc3819-4d7f-4091-bbab-09a970f637f0/console.sql">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="4">
-              <caret line="18" selection-start-line="18" selection-end-line="18" selection-end-column="26" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/WebScanner/settings.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="88">
-              <caret line="113" column="24" lean-forward="true" selection-start-line="113" selection-start-column="24" selection-end-line="113" selection-end-column="24" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/WebScanner/spiders/weakpwd_spider.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="261">
-              <caret line="64" column="41" lean-forward="true" selection-start-line="64" selection-start-column="41" selection-end-line="64" selection-end-column="41" />
-              <folding>
-                <element signature="e#44#64#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/WebScanner/spiders/xss_spider.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="130">
-              <caret line="57" column="35" lean-forward="true" selection-start-line="57" selection-start-column="35" selection-end-line="57" selection-end-column="35" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/WebScanner/GUI/Gui_main.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="250">
-              <caret line="116" column="64" selection-start-line="116" selection-start-column="64" selection-end-line="116" selection-end-column="64" />
-              <folding>
-                <element signature="e#76#96#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/WebScanner/spiders/sqli_spider.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-795">
-              <caret line="150" column="76" selection-start-line="150" selection-start-column="71" selection-end-line="150" selection-end-column="76" />
+            <state relative-caret-position="2925">
+              <caret line="117" column="21" lean-forward="true" selection-start-line="117" selection-start-column="21" selection-end-line="117" selection-end-column="21" />
               <folding>
                 <element signature="e#44#64#0" expanded="true" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/WebScanner/img/XSS_Detect.png">
+          <provider selected="true" editor-type-id="images" />
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/WebScanner/Vulnerability_policy_Library/SQLI/sqli_parttern.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="100">
+              <caret line="10" column="17" selection-start-line="10" selection-start-column="17" selection-end-line="10" selection-end-column="17" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/WebScanner/Report/getVulnRepairSuggestion.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="100">
+              <caret line="4" selection-start-line="4" selection-end-line="4" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/WebScanner/Report/word.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="75">
+              <caret line="3" lean-forward="true" selection-start-line="3" selection-end-line="3" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/WebScanner/img/webscanner.png">
+          <provider selected="true" editor-type-id="images" />
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/WebScanner/spiders/LFI_spider.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="100">
+              <caret line="4" selection-start-line="4" selection-end-line="4" />
             </state>
           </provider>
         </entry>
@@ -208,9 +192,9 @@
       <find>don</find>
       <find>next_url</find>
       <find>next_url = list</find>
-      <find>print</find>
       <find>value</find>
       <find>Request</find>
+      <find>print</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -219,8 +203,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/WebScanner/GUI/7.py" />
-        <option value="$PROJECT_DIR$/WebScanner/GUI/13.py" />
         <option value="$PROJECT_DIR$/WebScanner/GUI/10.py" />
         <option value="$PROJECT_DIR$/WebScanner/GUI/6.py" />
         <option value="$PROJECT_DIR$/WebScanner/GUI/Processbar.py" />
@@ -255,7 +237,6 @@
         <option value="$PROJECT_DIR$/WebScanner/cmd/lfitest.py" />
         <option value="$PROJECT_DIR$/WebScanner/GUI/SiteFileTree.py" />
         <option value="$PROJECT_DIR$/WebScanner/GUI/Histogram.py" />
-        <option value="$PROJECT_DIR$/WebScanner/spiders/crlf_spider.py" />
         <option value="$PROJECT_DIR$/WebScanner/GUI/GuiApplication.py" />
         <option value="$PROJECT_DIR$/WebScanner/spiders/fingerprint_spider.py" />
         <option value="$PROJECT_DIR$/WebScanner/settings.py" />
@@ -267,9 +248,12 @@
         <option value="$PROJECT_DIR$/WebScanner/spiders/weakpwd_spider.py" />
         <option value="$PROJECT_DIR$/WebScanner/spiders/sqli_spider.py" />
         <option value="$PROJECT_DIR$/WebScanner/spiders/xss_spider.py" />
-        <option value="$APPLICATION_CONFIG_DIR$/consoles/db/1ddc3819-4d7f-4091-bbab-09a970f637f0/console.sql" />
         <option value="$PROJECT_DIR$/WebScanner/spiders/link_spider.py" />
         <option value="$PROJECT_DIR$/WebScanner/GUI/Gui_main.py" />
+        <option value="$PROJECT_DIR$/WebScanner/spiders/crlf_spider.py" />
+        <option value="$APPLICATION_CONFIG_DIR$/consoles/db/1ddc3819-4d7f-4091-bbab-09a970f637f0/console.sql" />
+        <option value="$PROJECT_DIR$/WebScanner/Report/getVulnRepairSuggestion.py" />
+        <option value="$PROJECT_DIR$/WebScanner/Report/word.py" />
       </list>
     </option>
   </component>
@@ -302,7 +286,13 @@
               <item name="WebScanner" type="b2602c69:ProjectViewProjectNode" />
               <item name="WebScanner" type="462c0819:PsiDirectoryNode" />
               <item name="WebScanner" type="462c0819:PsiDirectoryNode" />
-              <item name="GUI" type="462c0819:PsiDirectoryNode" />
+              <item name="img" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="WebScanner" type="b2602c69:ProjectViewProjectNode" />
+              <item name="WebScanner" type="462c0819:PsiDirectoryNode" />
+              <item name="WebScanner" type="462c0819:PsiDirectoryNode" />
+              <item name="Report" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="WebScanner" type="b2602c69:ProjectViewProjectNode" />
@@ -321,22 +311,7 @@
               <item name="WebScanner" type="462c0819:PsiDirectoryNode" />
               <item name="WebScanner" type="462c0819:PsiDirectoryNode" />
               <item name="Vulnerability_policy_Library" type="462c0819:PsiDirectoryNode" />
-              <item name="WeakPd" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="WebScanner" type="b2602c69:ProjectViewProjectNode" />
-              <item name="Scratches and Consoles" type="1a2a3e82:ScratchProjectViewPane$MyProjectNode" />
-            </path>
-            <path>
-              <item name="WebScanner" type="b2602c69:ProjectViewProjectNode" />
-              <item name="Scratches and Consoles" type="1a2a3e82:ScratchProjectViewPane$MyProjectNode" />
-              <item name="Database Consoles" type="d62648e6:ScratchProjectViewPane$MyRootNode" />
-            </path>
-            <path>
-              <item name="WebScanner" type="b2602c69:ProjectViewProjectNode" />
-              <item name="Scratches and Consoles" type="1a2a3e82:ScratchProjectViewPane$MyProjectNode" />
-              <item name="Database Consoles" type="d62648e6:ScratchProjectViewPane$MyRootNode" />
-              <item name="1ddc3819-4d7f-4091-bbab-09a970f637f0" type="1e004dc1:ScratchProjectViewPane$MyRootNode$1$1" />
+              <item name="SQLI" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
@@ -347,7 +322,7 @@
   <component name="PropertiesComponent">
     <property name="DatabaseDriversLRU" value="mysql" />
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="database.console.LAST_STATE" value="true" />
+    <property name="database.console.LAST_STATE" value="false" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$/../毕业设计/Webscanner" />
     <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
     <property name="nodejs_npm_path_reset_for_default_project" value="true" />
@@ -362,6 +337,7 @@
       <recent name="E:\南昌航空大学\WebScanner\WebScanner\GUI_CMD\gui" />
     </key>
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="E:\南昌航空大学\WebScanner\WebScanner\img" />
       <recent name="E:\南昌航空大学\WebScanner\WebScanner\Vulnerability_policy_Library\RFI&amp;LFI\LFI" />
       <recent name="E:\南昌航空大学\WebScanner\WebScanner" />
       <recent name="E:\南昌航空大学\WebScanner\WebScanner\GUI_CMD\gui" />
@@ -521,12 +497,12 @@
       <workItem from="1557882559521" duration="11384000" />
       <workItem from="1557899679147" duration="33114000" />
       <workItem from="1557966155330" duration="27090000" />
-      <workItem from="1558008369031" duration="18936000" />
+      <workItem from="1558008369031" duration="28177000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="292600000" />
+    <option name="totallyTimeSpent" value="301841000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -541,13 +517,13 @@
     <frame x="-7" y="-7" width="1519" height="977" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.49456522" visible="true" weight="0.2861054" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" sideWeight="0.49456522" visible="true" weight="0.2861054" />
       <window_info id="Structure" order="1" sideWeight="0.5054348" side_tool="true" weight="0.27789184" />
       <window_info id="Favorites" order="2" sideWeight="0.502447" side_tool="true" weight="0.26557153" />
-      <window_info anchor="bottom" id="Database Console" order="0" sideWeight="0.4989733" weight="0.6638246" />
+      <window_info anchor="bottom" id="Database Console" order="0" sideWeight="0.4989733" weight="0.4311815" />
       <window_info anchor="bottom" id="Message" order="1" />
       <window_info anchor="bottom" id="Find" order="2" weight="0.32886723" />
-      <window_info active="true" anchor="bottom" id="Run" order="3" sideWeight="0.91101986" visible="true" weight="0.3447016" />
+      <window_info anchor="bottom" id="Run" order="3" sideWeight="0.91101986" visible="true" weight="0.23995128" />
       <window_info anchor="bottom" id="Debug" order="4" sideWeight="0.49965778" weight="0.38002437" />
       <window_info anchor="bottom" id="Cvs" order="5" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="6" weight="0.4" />
@@ -556,7 +532,7 @@
       <window_info anchor="bottom" id="Version Control" order="9" sideWeight="0.49965778" weight="0.32886723" />
       <window_info anchor="bottom" id="Database Changes" order="10" show_stripe_button="false" />
       <window_info anchor="bottom" id="Event Log" order="11" sideWeight="0.50171113" side_tool="true" weight="0.22655298" />
-      <window_info anchor="bottom" id="Terminal" order="12" sideWeight="0.49828884" weight="0.9512789" />
+      <window_info anchor="bottom" id="Terminal" order="12" sideWeight="0.49828884" weight="0.20828258" />
       <window_info anchor="bottom" id="Python Console" order="13" sideWeight="0.4989733" weight="0.33008525" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
@@ -651,23 +627,6 @@
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/WebScanner/spiders/test.py" />
-    <entry file="file://$PROJECT_DIR$/WebScanner/Vulnerability_policy_Library/RFI&amp;LFI/__init__.py">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/WebScanner/Vulnerability_policy_Library/RFI&amp;LFI/LFI/__init__.py">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/WebScanner/Vulnerability_policy_Library/RFI&amp;LFI/RFI/__init__.py">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/WebScanner/Vulnerability_policy_Library/SQLI/sqli_parttern.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="250">
-          <caret line="10" column="17" selection-start-line="10" selection-start-column="17" selection-end-line="10" selection-end-column="17" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/formdata.txt">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
@@ -818,9 +777,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="375">
           <caret line="360" column="52" lean-forward="true" selection-start-line="360" selection-start-column="52" selection-end-line="360" selection-end-column="52" />
-          <folding>
-            <element signature="e#80#100#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -875,13 +831,6 @@
     <entry file="file://$PROJECT_DIR$/WebScanner/cmd/WeakpwdSpider.py">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
-    <entry file="file://$PROJECT_DIR$/WebScanner/spiders/LFI_spider.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="100">
-          <caret line="4" selection-start-line="4" selection-end-line="4" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/WebScanner/GUI/SiteFileTree.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="326">
@@ -896,26 +845,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1188">
           <caret line="72" column="26" lean-forward="true" selection-start-line="72" selection-start-column="26" selection-end-line="72" selection-end-column="26" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/WebScanner/spiders/crlf_spider.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="122">
-          <caret line="36" column="8" lean-forward="true" selection-start-line="36" selection-start-column="8" selection-end-line="36" selection-end-column="31" />
-          <folding>
-            <element signature="e#47#67#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/WebScanner/GUI/GuiApplication.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2225">
-          <caret line="99" selection-start-line="99" selection-end-line="99" />
-          <folding>
-            <element signature="e#80#100#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -956,58 +885,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/WebScanner/Vulnerability_policy_Library/WeakPd/pass_list.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="295">
-          <caret line="45" column="15" selection-start-line="45" selection-start-column="15" selection-end-line="45" selection-end-column="15" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/WebScanner/spiders/fingerprint_spider.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="275">
-          <caret line="56" column="88" selection-start-line="56" selection-start-column="88" selection-end-line="56" selection-end-column="88" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/WebScanner/spiders/sqli_spider.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-795">
-          <caret line="150" column="76" selection-start-line="150" selection-start-column="71" selection-end-line="150" selection-end-column="76" />
-          <folding>
-            <element signature="e#44#64#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/WebScanner/spiders/weakpwd_spider.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="261">
-          <caret line="64" column="41" lean-forward="true" selection-start-line="64" selection-start-column="41" selection-end-line="64" selection-end-column="41" />
-          <folding>
-            <element signature="e#44#64#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/WebScanner/spiders/xss_spider.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="130">
-          <caret line="57" column="35" lean-forward="true" selection-start-line="57" selection-start-column="35" selection-end-line="57" selection-end-column="35" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/WebScanner/settings.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="88">
+        <state relative-caret-position="443">
           <caret line="113" column="24" lean-forward="true" selection-start-line="113" selection-start-column="24" selection-end-line="113" selection-end-column="24" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$APPLICATION_CONFIG_DIR$/consoles/db/1ddc3819-4d7f-4091-bbab-09a970f637f0/console.sql">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="4">
-          <caret line="18" selection-start-line="18" selection-end-line="18" selection-end-column="26" />
         </state>
       </provider>
     </entry>
@@ -1021,12 +902,114 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/WebScanner/spiders/fingerprint_spider.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="275">
+          <caret line="56" column="88" selection-start-line="56" selection-start-column="88" selection-end-line="56" selection-end-column="88" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/WebScanner/spiders/weakpwd_spider.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="261">
+          <caret line="64" column="41" lean-forward="true" selection-start-line="64" selection-start-column="41" selection-end-line="64" selection-end-column="41" />
+          <folding>
+            <element signature="e#44#64#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$APPLICATION_CONFIG_DIR$/consoles/db/1ddc3819-4d7f-4091-bbab-09a970f637f0/console.sql">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="169">
+          <caret line="43" selection-start-line="43" selection-end-line="43" selection-end-column="25" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/WebScanner/spiders/xss_spider.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="75">
+          <caret line="3" lean-forward="true" selection-start-line="3" selection-end-line="3" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/WebScanner/spiders/crlf_spider.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1250">
+          <caret line="50" column="95" selection-start-line="50" selection-start-column="95" selection-end-line="50" selection-end-column="95" />
+          <folding>
+            <element signature="e#47#67#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/WebScanner/spiders/sqli_spider.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2925">
+          <caret line="117" column="21" lean-forward="true" selection-start-line="117" selection-start-column="21" selection-end-line="117" selection-end-column="21" />
+          <folding>
+            <element signature="e#44#64#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/WebScanner/Vulnerability_policy_Library/WeakPd/pass_list.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="295">
+          <caret line="45" column="15" selection-start-line="45" selection-start-column="15" selection-end-line="45" selection-end-column="15" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/WebScanner/spiders/LFI_spider.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="100">
+          <caret line="4" selection-start-line="4" selection-end-line="4" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/WebScanner/Report/getVulnRepairSuggestion.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="100">
+          <caret line="4" selection-start-line="4" selection-end-line="4" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/WebScanner/Report/word.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="75">
+          <caret line="3" lean-forward="true" selection-start-line="3" selection-end-line="3" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/WebScanner/img/webscanner.png">
+      <provider selected="true" editor-type-id="images" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/WebScanner/Vulnerability_policy_Library/SQLI/sqli_parttern.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="100">
+          <caret line="10" column="17" selection-start-line="10" selection-start-column="17" selection-end-line="10" selection-end-column="17" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/WebScanner/img/XSS_Detect.png">
+      <provider selected="true" editor-type-id="images" />
+    </entry>
     <entry file="file://$PROJECT_DIR$/WebScanner/GUI/Gui_main.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="250">
+        <state relative-caret-position="-550">
           <caret line="116" column="64" selection-start-line="116" selection-start-column="64" selection-end-line="116" selection-end-column="64" />
           <folding>
             <element signature="e#76#96#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/WebScanner/GUI/GuiApplication.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="375">
+          <caret line="99" selection-start-line="99" selection-end-line="99" />
+          <folding>
+            <element signature="e#80#100#0" expanded="true" />
           </folding>
         </state>
       </provider>

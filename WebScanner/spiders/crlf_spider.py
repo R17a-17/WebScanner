@@ -34,18 +34,21 @@ class CRLF_Spider(Spider):
 
     def parse(self, response):
         ''''''
-        print(response.headers)
-        if self.crlf_check(response.headers):
-            print('>>>crlf')
+
+        if self.detect_code == None:
+            print('>>>no injection point')
         else:
-            print('>>>no crlf')
+            if self.crlf_check(response.headers):
+                print('>>>crlf')
+            else:
+                print('>>>no crlf')
 
         self.linkth = self.linkth + 1
         self.url = self.geturlfrommysql(self.linkth)
 
         if self.url:
             # 如果找到下一页的URL，构造新的Request 对象
-            yield Request(self.url, callback=self.parse, cookies = self.cookie)
+            yield Request(self.url, callback=self.parse, cookies = self.cookie,dont_filter=True)
 
 
 
@@ -59,16 +62,18 @@ class CRLF_Spider(Spider):
         for match in re.finditer(r"((\A|[?&])(?P<parameter>[\w]+)=)(?P<value>[^&]+)", url):
             list.append({'parameter':match.group('parameter'),'value':match.group('value')})
         #在最后一个参数后面添加探测码
-        i = len(list) - 1
-        parameter = list[i]['parameter']
-        value = list[i]['value']
-        self.detect_code = '%0D%0A%20webscanCustomInjectedHeader%3A$20injectedbywd'
-        oldstr = parameter + '=' + value
-        value1 = value + self.detect_code
-        # 参数和探测值生成新的字符串
-        newstr = parameter + '=' + value1
-        url = url.replace(oldstr, newstr)
-        print(url)
+        if len(list) > 0:
+            i = len(list) - 1
+            parameter = list[i]['parameter']
+            value = list[i]['value']
+            self.detect_code = '%0D%0A%20webscanCustomInjectedHeader%3A$20injectedbywd'
+            oldstr = parameter + '=' + value
+            value1 = value + self.detect_code
+            # 参数和探测值生成新的字符串
+            newstr = parameter + '=' + value1
+            url = url.replace(oldstr, newstr)
+        else:
+            self.detect_code = None
         return url
 
     def crlf_check(self, headers):
