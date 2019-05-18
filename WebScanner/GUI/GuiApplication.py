@@ -15,6 +15,7 @@ from WebScanner.GUI import SiteFileTree
 from WebScanner.GUI import Histogram
 from WebScanner.GUI import PieChart
 from WebScanner.Mysqldb import GetVulnAPI
+from WebScanner.Report import word
 #--------------------------------------------------
 
 
@@ -283,4 +284,6 @@ class MForm(tk.Frame):
             self.PieChart = PieChart.main(self.ScanGraphView,[25,25,25,25])
         self.getResultlist()
         if messagebox.askyesno(title='获取扫描报告', message='是否生成报告？"'):
-            messagebox.shouinfo(title='获取报告',message = '请在webscanner的reporttmp目录下面查看report.docx文档')
+            # time.sleep(1)
+            word.main(self.tgtEntry.get(),scantime='5分钟',scanurlnum=51)
+            messagebox.showinfo(title='获取报告',message = '请在webscanner的reporttmp目录下面查看report.docx文档')
