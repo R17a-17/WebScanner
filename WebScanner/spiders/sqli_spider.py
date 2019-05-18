@@ -10,7 +10,7 @@ from scrapy.conf import settings
 import datetime
 import requests
 from WebScanner.item_sqli import SqliItem
-from WebScanner.Vulnerability_policy_Library.SQLI.sqli_parttern import SQLI_BOOLEAN_PAYLOADS,SQLI_ERROR_PAYLOADS,SQLI_ERRORS
+from WebScanner.Vulnerability_policy_Library.SQLI.sqli_payload_parttern import SQLI_BOOLEAN_PAYLOADS,SQLI_ERROR_PAYLOADS,SQLI_ERRORS
 
 
 class SqliSpider(Spider):

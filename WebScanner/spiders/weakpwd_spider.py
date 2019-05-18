@@ -81,9 +81,10 @@ class Weakpwd_Spider(Spider):
             db_cur = db_conn.cursor()
             values = (
                 self.start_urls[0],
-                string
+                string,
+                '高危'
             )
-            sql = 'INSERT INTO t_vulninfo(vulnurl, vulntype) VALUES (%s,%s)'
+            sql = 'INSERT INTO t_vulninfo(vulnurl, vulntype) VALUES (%s,%s,%s)'
             # sql = 'INSERT INTO t_link_tmp(link) SELECT %s FROM DUAL WHERE NOT EXISTS(SELECT link from t_link_tmp where link = %s)'
             db_cur.execute(sql,values)
             db_conn.commit()

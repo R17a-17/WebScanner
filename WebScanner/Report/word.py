@@ -5,13 +5,21 @@
 #######################本脚本用于处理word文档，生成扫描报告###############################
 
 
+###############################################
 from docx import Document
 from docx.shared import Pt
 from docx.shared import Inches
 from docx.oxml.ns import qn
 from docx.enum.text import WD_PARAGRAPH_ALIGNMENT
+import requests
+import re
+from urllib.parse import urlparse
+##################################################
+#内部类
 from WebScanner.Report import histogram_pic
 from WebScanner.Report import piechart_pic
+from WebScanner.Mysqldb import GetVulnAPI
+##################################################
 
 
 #标题字体
@@ -26,7 +34,7 @@ picture_width = 6
 class GenerateReport(object):
     '''生成漏洞扫描报告'''
 
-    def __init__(self,title,sitename,vulnnum, urgentvulnnum, highvulnnum, midumvulnnum, sitedomain, scantime, port,piechartdata,fname = 'report.docx'):
+    def __init__(self,sitename,vulnnum, urgentvulnnum, highvulnnum, midumvulnnum, sitedomain, scantime, scanurlnum,piechartdata,vulninfo,fname = 'report.docx'):
         # 生成一个word文档对象
         self.document = Document()
         # 设置文档默认字体
@@ -35,10 +43,10 @@ class GenerateReport(object):
         self.document.styles['Normal'].font.size = Pt(12)
         self.document.styles['Normal']._element.rPr.rFonts.set(qn('w:eastAsia'), u'宋体')
 
-        self.setTitle(title)
-        self.setSummaryPart(sitename,vulnnum, urgentvulnnum, highvulnnum, midumvulnnum, sitedomain, scantime, port)
+        self.setTitle(sitename)
+        self.setSummaryPart(sitename,vulnnum, urgentvulnnum, highvulnnum, midumvulnnum, sitedomain, scantime, scanurlnum)
         self.setGraph((0,0,midumvulnnum,highvulnnum,urgentvulnnum),piechartdata)
-        self.setVulnlist()
+        self.setVulnlist(vulnnum,vulninfo)
 
         path = '../reporttmp/'
         self.document.save(path + fname)
@@ -46,7 +54,7 @@ class GenerateReport(object):
 
     def setTitle(self, titlestr):
         # 添加标题：参数为标题字符串
-        titlestr = titlestr + '网站安全报告'
+        titlestr = '"' + titlestr + '"网站安全报告'
         title = self.document.add_heading('', level=1)
         title.paragraph_format.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER  # 标题居中
         title_run = title.add_run(titlestr)
@@ -55,7 +63,7 @@ class GenerateReport(object):
         title_run._element.rPr.rFonts.set(qn('w:eastAsia'), title_font_name)
 
 
-    def setSummaryPart(self,sitename,vulnnum, urgentvulnnum, highvulnnum, midumvulnnum, sitedomain, scantime, port = 80):
+    def setSummaryPart(self,sitename,vulnnum, urgentvulnnum, highvulnnum, midumvulnnum, sitedomain, scantime, scanurlnum):
         '''设置概况部分'''
         # 一、网站概况
         summary_titlestr = '一、网站概况'
@@ -77,12 +85,12 @@ class GenerateReport(object):
 
         # 基本信息列表
         sitedomain = sitedomain
-        port = str(port)
+        scanurlnum = str(scanurlnum)
         scantime = scantime
         summarylist_domain = '域名：' + sitedomain
-        summarylist_port = '端口：' + port
+        summarylist_urlnum = '扫描url总数：' + scanurlnum
         summarylist_time = '扫描时长：' + scantime
-        summarylist = [summarylist_domain, summarylist_port, summarylist_time]
+        summarylist = [summarylist_domain, summarylist_urlnum, summarylist_time]
         i = 0
         while i < 3:
             self.document.add_paragraph(
@@ -122,7 +130,7 @@ class GenerateReport(object):
         paragraph._element.rPr.rFonts.set(qn('w:eastAsia'), u'微软雅黑')
 
 
-    def setVulnlist(self):
+    def setVulnlist(self,vulnnum,vulninfo):
         '''生成漏洞详情列表'''
         titlestr = '三、漏洞详情列表'
         title = self.document.add_heading('', level=2)
@@ -139,25 +147,24 @@ class GenerateReport(object):
         # 漏洞危害：XXXXXXXXXXXXX
         # 修复建议：XXXXXXXXXXX
 
-        vulnnum = 10
         while vulnnum > 0:
             self.document.add_paragraph('                     \n')
             table = self.document.add_table(rows=5, cols=2)
             hdr_cells1 = table.rows[0].cells
             hdr_cells1[0].text = '漏洞类型'
-            hdr_cells1[1].text = 'xxx'
+            hdr_cells1[1].text = vulninfo[vulnnum-1]['vulntype']
             hdr_cells2 = table.rows[1].cells
             hdr_cells2[0].text = '漏洞等级'
-            hdr_cells2[1].text = 'xxx'
+            hdr_cells2[1].text = vulninfo[vulnnum-1]['vulnlevel']
             hdr_cells3 = table.rows[2].cells
             hdr_cells3[0].text = '漏洞URL'
-            hdr_cells3[1].text = 'xxx'
+            hdr_cells3[1].text = vulninfo[vulnnum-1]['vulnurl']
             hdr_cells4 = table.rows[3].cells
             hdr_cells4[0].text = '漏洞危害'
-            hdr_cells4[1].text = 'xxx'
+            hdr_cells4[1].text = vulninfo[vulnnum-1]['vulnaffection']
             hdr_cells5 = table.rows[4].cells
             hdr_cells5[0].text = '修复建议'
-            hdr_cells5[1].text = 'xxx'
+            hdr_cells5[1].text = vulninfo[vulnnum-1]['vulnsuggestion']
 
             vulnnum = vulnnum - 1
 
@@ -168,10 +175,48 @@ class GenerateReport(object):
         #     row_cells[2].text = item.desc
 
 
+def get_title(url):
+    '''
+    用re抽取网页Title
+    '''
+
+    html = requests.get(url).text
+    compile_rule = r'<title>.*</title>'
+    title_list = re.findall(compile_rule, html)
+    if title_list == []:
+        title = ''
+    else:
+        title = title_list[0][7:-8]
+    return title
+
+
+def main(url,scantime,scanurlnum):
+    sitename = get_title(url)
+    sql = GetVulnAPI.GetVuln()
+    vulnnum = sql.getAllVuln_num()
+    Weakpwdnum = sql.getWeakpwdVuln_num()
+    Xssnum = sql.getXssVuln_num()
+    Sqlinum = sql.getSqliVuln_num()
+    Crlfnum = sql.getCrlfVuln_num()
+    highvulnnum = Weakpwdnum + Xssnum
+    urgentvulnnum = Sqlinum
+    midumvulnnum = Crlfnum
+
+    sitedomain = urlparse(url).netloc
+    piechartdata = [Xssnum,Sqlinum,Crlfnum,Weakpwdnum]
+
+    vulninfo = sql.getAllVuln_url()
+
+    GenerateReport(
+        sitename=sitename, vulnnum=vulnnum, urgentvulnnum=urgentvulnnum, highvulnnum=highvulnnum, midumvulnnum=midumvulnnum,
+        sitedomain=sitedomain, scantime=scantime, scanurlnum=scanurlnum,
+        piechartdata=piechartdata,
+        vulninfo = vulninfo,
+        )
+
+
+
 
 if __name__ == '__main__':
-    word = GenerateReport(title = '1',
-                          sitename = '测试',vulnnum = 10, urgentvulnnum = 1, highvulnnum = 5, midumvulnnum = 4, sitedomain = '192.168.177.161', scantime = '5分10秒', port = 80,
-                          piechartdata = (0,1,5,4)
-                          )
+    word = main(url = 'http://192.168.177.161/bWAPP_latest/bwapp/login.php',scantime='5分10秒',scanurlnum=50)
 

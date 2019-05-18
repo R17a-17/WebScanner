@@ -14,7 +14,7 @@ from WebScanner.GUI import Verify
 from WebScanner.GUI import SiteFileTree
 from WebScanner.GUI import Histogram
 from WebScanner.GUI import PieChart
-from WebScanner.Mysqldb import GetVuln
+from WebScanner.Mysqldb import GetVulnAPI
 #--------------------------------------------------
 
 
@@ -235,7 +235,7 @@ class MForm(tk.Frame):
 
     def getHistogramResult(self):
         '''获取柱状图扫描结果'''
-        vuln = GetVuln.GetVuln()
+        vuln = GetVulnAPI.GetVuln()
         allvlunnum = vuln.getAllVuln_num()
         sqlinum = vuln.getSqliVuln_num()
         xssnum = vuln.getXssVuln_num()
@@ -248,7 +248,7 @@ class MForm(tk.Frame):
 
     def getPiechartResult(self):
         '''获取饼图扫描结果'''
-        vuln = GetVuln.GetVuln()
+        vuln = GetVulnAPI.GetVuln()
         allvlunnum = vuln.getAllVuln_num()
         sqlinum = vuln.getSqliVuln_num()
         xssnum = vuln.getXssVuln_num()
@@ -260,7 +260,7 @@ class MForm(tk.Frame):
 
     def getResultlist(self):
         '''获取扫描漏洞结果'''
-        vuln = GetVuln.GetVuln()
+        vuln = GetVulnAPI.GetVuln()
         allvulninfo = vuln.getAllVuln_url()
         allnum = vuln.getAllVuln_num()
         if allnum != 0:

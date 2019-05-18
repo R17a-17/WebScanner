@@ -23,6 +23,7 @@ def make_histogrampng(data):
 
     maxvalue = max(data)
     height = max(data)
+    span = 0
     if maxvalue == 0:
         span = 0
     else:
@@ -41,8 +42,11 @@ def make_histogrampng(data):
     # 添加横纵坐标的刻度
     labels = [u'信息', u'低危', u'中危', u'高危', u'紧急']
     plt.xticks(range(len(labels)), labels)
-    plt.yticks(np.arange(0, height, span))
-    fname = 'pic1.png'
+    try:
+        plt.yticks(np.arange(0, int(height), int(span)))
+    except ZeroDivisionError as e:
+        plt.yticks(np.arange(0, 0, 1))
+    fname = '../reporttmp/pic1.png'
     plt.savefig(fname)
 
     plt.close()

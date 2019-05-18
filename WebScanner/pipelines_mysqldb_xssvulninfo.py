@@ -10,6 +10,7 @@
 from twisted.enterprise import adbapi
 import pymysql
 from WebScanner.items_xss import XssItem
+from WebScanner.Vulnerability_policy_Library.XSS import xss_fix_suggestion
 
 class XssPipeline:
     '''处理linkitem的链接，将所有爬取到的链接插入数据库'''
@@ -44,8 +45,11 @@ class XssPipeline:
         values = (
             item['vulnurl'],
             item['vulntype'],
+            '高危',
+            xss_fix_suggestion.XSS_AFFECTION[0],
+            xss_fix_suggestion.XSS_FIX_SUGGESTION[0],
         )
-        sql = 'INSERT INTO t_vulninfo(vulnurl, vulntype) VALUES (%s,%s)'
+        sql = 'INSERT INTO t_vulninfo(vulnurl, vulntype, vlunlevel,vulnaffection,vulnsuggestion) VALUES (%s,%s,%s,%s,%s)'
         # sql = 'INSERT INTO t_link_tmp(link) SELECT %s FROM DUAL WHERE NOT EXISTS(SELECT link from t_link_tmp where link = %s)'
         try:
             tx.execute(sql,values)

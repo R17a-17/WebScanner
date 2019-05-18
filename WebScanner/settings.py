@@ -117,4 +117,4 @@ MYSQL_PORT = '3306'
 #请使用用户名密码登录后获取到cookie，并在{ }里面写上cookie，
 # 比如COOKIES = {'security': 'low', 'security_level': '0', 'PHPSESSID': 'fec0034048ea796a86a3a551d8673eea'}
 # COOKIES = {'security':'low','security_level':'0', 'PHPSESSID':'fd4b7313c6bdd1c81580b526fa7a8d8a'}
-COOKIES = {'security_level':'0', 'PHPSESSID':'acd1fee07dc468e19da1a9830b34c85b'}
+COOKIES = {'security_level':'0', 'PHPSESSID':'c60afcab8aefd66e810ad531e10599ee'}

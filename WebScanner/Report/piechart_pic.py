@@ -45,7 +45,7 @@ def make_piechartpng(data):
 
     plt.title(u'饼图—统计各类型漏洞所占比例')
 
-    fname = 'pic2.png'
+    fname = '../reporttmp/pic2.png'
     plt.savefig(fname)
 
     plt.close()
@@ -53,7 +53,7 @@ def make_piechartpng(data):
 
 
 def main():
-    make_histogrampng((0,5,3,1))
+    make_piechartpng((0,5,3,1))
 
 
 if __name__ == '__main__':

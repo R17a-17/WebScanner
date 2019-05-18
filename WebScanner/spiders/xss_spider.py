@@ -11,7 +11,7 @@ from scrapy.conf import settings
 #################################################################
 #内部导入
 from WebScanner.items_xss import XssItem
-from WebScanner.Vulnerability_policy_Library.XSS.xss_patterns import XSS_JS_ONARRAY,XSS_JS_WINDOW,XSS_END,XSS_START,HTMLTAG_XSS_START,HTMLTAG_XSS_END
+from WebScanner.Vulnerability_policy_Library.XSS.xss_paload_patterns import XSS_JS_ONARRAY,XSS_JS_WINDOW,XSS_END,XSS_START,HTMLTAG_XSS_START,HTMLTAG_XSS_END
 ###############################################################
 
 

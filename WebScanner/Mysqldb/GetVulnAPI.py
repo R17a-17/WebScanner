@@ -12,7 +12,7 @@ class GetVuln(object):
 
     def getXssVuln_url(self):
         '''获取xss信息'''
-        sql = 'select vulntype,vulnurl from t_vulninfo where vulntype like "XSS%"'
+        sql = 'select vulntype,vulnurl,vulnlevel,vulnaffection,vulnsuggestion from t_vulninfo where vulntype like "XSS%"'
         # sql = 'INSERT INTO t_link_tmp(link) SELECT %s FROM DUAL WHERE NOT EXISTS(SELECT link from t_link_tmp where link = %s)'
         self.db_cur.execute(sql)
         try:
@@ -26,7 +26,7 @@ class GetVuln(object):
 
     def getSqliVuln_url(self):
         '''获取sqli信息'''
-        sql = 'select vulntype,vulnurl from t_vulninfo where vulntype linke "SQLI%"'
+        sql = 'select vulntype,vulnurl,vulnlevel,vulnaffection,vulnsuggestion from t_vulninfo where vulntype linke "SQLI%"'
         # sql = 'INSERT INTO t_link_tmp(link) SELECT %s FROM DUAL WHERE NOT EXISTS(SELECT link from t_link_tmp where link = %s)'
         self.db_cur.execute(sql)
         try:
@@ -40,7 +40,7 @@ class GetVuln(object):
 
     def getCrlfVuln_url(self):
         '''获取sqli信息'''
-        sql = 'select vulntype,vulnurl from t_vulninfo where vulntype linke "CRLF%"'
+        sql = 'select vulntype,vulnurl,vulnlevel,vulnaffection,vulnsuggestion from t_vulninfo where vulntype linke "CRLF%"'
         # sql = 'INSERT INTO t_link_tmp(link) SELECT %s FROM DUAL WHERE NOT EXISTS(SELECT link from t_link_tmp where link = %s)'
         self.db_cur.execute(sql)
         try:
@@ -54,7 +54,7 @@ class GetVuln(object):
 
     def getWeakpwdVuln_url(self):
         '''获取sqli信息'''
-        sql = 'select vulntype,vulnurl from t_vulninfo where vulntype linke "Weak Password%"'
+        sql = 'select vulntype,vulnurl,vulnlevel,vulnaffection,vulnsuggestion from t_vulninfo where vulntype linke "Weak Password%"'
         # sql = 'INSERT INTO t_link_tmp(link) SELECT %s FROM DUAL WHERE NOT EXISTS(SELECT link from t_link_tmp where link = %s)'
         self.db_cur.execute(sql)
         try:
@@ -69,7 +69,7 @@ class GetVuln(object):
     def getAllVuln_url(self):
         '''获取sqli信息'''
         allinfo = []
-        sql = 'select vulntype,vulnurl from t_vulninfo'
+        sql = 'select vulntype,vulnurl,vulnlevel,vulnaffection,vulnsuggestion from t_vulninfo'
         # sql = 'INSERT INTO t_link_tmp(link) SELECT %s FROM DUAL WHERE NOT EXISTS(SELECT link from t_link_tmp where link = %s)'
         self.db_cur.execute(sql)
         try:
@@ -77,7 +77,10 @@ class GetVuln(object):
             for vuln in result:
                 alltype = vuln[0]
                 allurl = vuln[1]
-                allinfo.append({'vulntype':alltype, 'vulnurl':allurl})
+                alllevel = vuln[2]
+                allaffection = vuln[3]
+                allsuggestion = vuln[4]
+                allinfo.append({'vulntype':alltype, 'vulnurl':allurl, 'vulnlevel':alllevel, 'vulnaffection':allaffection,'vulnsuggestion':allsuggestion})
         except:
             allinfo = None
         return allinfo
