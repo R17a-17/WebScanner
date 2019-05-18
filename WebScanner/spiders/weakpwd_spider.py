@@ -41,6 +41,10 @@ class Weakpwd_Spider(Spider):
         self.password = self.pass_list[self.passth]
         #根据表单属性等获取fromdata
         formlist = self.form_find(str(response.body))
+        print(formlist)
+        if formlist == None:
+            print("未探测到登录表单！")
+            return
         formdata = {
             formlist[2]:self.username,
             formlist[4]:self.password,
@@ -61,7 +65,7 @@ class Weakpwd_Spider(Spider):
         '''check login succeed before going on'''
         if re.match(".+login.+",response.url) != None or response.url == self.loginurl:
             print(self.password)
-            # print(r'>>>Login failed')
+            print(r'>>>Login failed')
             self.passth = self.passth + 1
             yield Request(self.start_urls[0], callback=self.parse, dont_filter = True)
         else:
@@ -128,7 +132,7 @@ class Weakpwd_Spider(Spider):
                 if 'value' in q.group().lower():
                     for r in re.finditer(r'value="(?P<loginvalue>[^ ]+)"( )?', q.group()):
                         loginbutton_value = 'login'
-
+        print('0000000000000000000000000',action, method, username_parameter,username_value, password_parameter,password_value, loginbutton_parameter,loginbutton_value)
         return action, method, username_parameter,username_value, password_parameter,password_value, loginbutton_parameter,loginbutton_value
 
 def main(url):

@@ -21,7 +21,7 @@ mpl.rcParams['axes.unicode_minus'] = False  # 负号显示
 
 
 class PieChart:
-    def __init__(self,root,data):
+    def __init__(self,root,data,save = 0):
         self.root = root  # 创建主窗体
         self.canvas = tk.Canvas()  # 创建一块显示图形的画布
         self.data = data
