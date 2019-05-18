@@ -34,39 +34,41 @@ class ThreadClient():
         print(threading.currentThread().ident)
 
 
-    def task(self):
-        '''这里放置耗时的button程序，用来执行系统命令'''
-        print(threading.currentThread().ident)
-        self.gui.scanButton.config(state=tk.DISABLED)
-        if Verify.Verify_tgt(self.gui.tgtEntry.get()):
-            messagebox.showwarning(title='警告', message='输入的目标url无效！请重新输入')
-            self.gui.scanButton.config(state=tk.NORMAL)
-            return
-        elif Verify.Verify_combox(self.gui.comboxlist.get()):
-            messagebox.showwarning(title='警告', message='请选择配置')
-            self.gui.scanButton.config(state=tk.NORMAL)
-            return
-        else:
-            messagebox.showinfo(title='提示', message='本扫描器针对任何漏洞的探测都在弱口令探测漏洞后进行，请知悉！')
-            self.gui.Resultlist.insert(tk.END, "开启WebScanner...\n")
-            self.gui.cmd = CMD[self.gui.comboxlist.get()]
-            self.gui.cmdvalue.set(self.gui.cmd + ' -a start_url=' + self.gui.tgtEntry.get())
-            print(self.gui.cmd)
-            self.gui.Resultlist.insert(tk.END, "正在进行弱口令探测...\n")
-            if self.gui.cmd == 'scrapy crawl WeakpwdSpider':
-                os.system('scrapy crawl WeakpwdSpider -a start_url=' + self.gui.tgtEntry.get())
-                os.system('scrapy crawl LinkSpider -a start_url' + self.gui.tgtEntry.get())
-            elif self.gui.cmd == 'scrapy crawl VulndetectSpider':
-                os.system('scrapy crawl WeakpwdSpider -a start_url=' + self.gui.tgtEntry.get())
-                os.system('scrapy crawl LinkSpider -a start_url=' + self.gui.tgtEntry.get())
-                os.system('scrapy crawl XssSpider')
-                os.system('scrapy crawl SqliSpider')
-                os.system('scrapy crawl CRLFSpider')
-            else:
-                os.system('scrapy crawl WeakpwdSpider -a start_url=http://192.168.177.161/dvwa/login.php')
-                os.system('scrapy crawl LinkSpider -a start_url=http://192.168.177.161/dvwa/login.php')
-                os.system(self.gui.cmd)
-        self.gui.scanButton.config(state=tk.NORMAL)
+    # def task(self):
+    #     '''这里放置耗时的button程序，用来执行系统命令'''
+    #     print(threading.currentThread().ident)
+    #     self.gui.scanButton.config(state=tk.DISABLED)
+    #     if Verify.Verify_tgt(self.gui.tgtEntry.get()):
+    #         messagebox.showwarning(title='警告', message='输入的目标url无效！请重新输入')
+    #         self.gui.scanButton.config(state=tk.NORMAL)
+    #         return
+    #     elif Verify.Verify_combox(self.gui.comboxlist.get()):
+    #         messagebox.showwarning(title='警告', message='请选择配置')
+    #         self.gui.scanButton.config(state=tk.NORMAL)
+    #         return
+    #     else:
+    #         messagebox.showinfo(title='提示', message='本扫描器针对任何漏洞的探测都在弱口令探测漏洞后进行，请知悉！')
+    #         self.gui.Resultlist.insert(tk.END, "开启WebScanner...\n")
+    #         self.gui.cmd = CMD[self.gui.comboxlist.get()]
+    #         self.gui.cmdvalue.set(self.gui.cmd + ' -a start_url=' + self.gui.tgtEntry.get())
+    #         print(self.gui.cmd)
+    #         self.gui.Resultlist.insert(tk.END, "正在进行弱口令探测...\n")
+    #         if self.gui.cmd == 'scrapy crawl WeakpwdSpider':
+    #             os.system('scrapy crawl WeakpwdSpider -a start_url=' + self.gui.tgtEntry.get())
+    #             os.system('scrapy crawl LinkSpider -a start_url' + self.gui.tgtEntry.get())
+    #         elif self.gui.cmd == 'scrapy crawl VulndetectSpider':
+    #             os.system('scrapy crawl WeakpwdSpider -a start_url=' + self.gui.tgtEntry.get())
+    #             os.system('scrapy crawl LinkSpider -a start_url=' + self.gui.tgtEntry.get())
+    #             os.system('scrapy crawl XssSpider')
+    #             os.system('scrapy crawl SqliSpider')
+    #             os.system('scrapy crawl CRLFSpider')
+    #         else:
+    #             os.system('scrapy crawl WeakpwdSpider -a start_url=http://192.168.177.161/dvwa/login.php')
+    #             os.system('scrapy crawl LinkSpider -a start_url=http://192.168.177.161/dvwa/login.php')
+    #             os.system(self.gui.cmd)
+    #     self.gui.scanButton.config(state=tk.NORMAL)
+    #     self.gui.GetResultButton.config(state = tk.NORMAL)
+
 
 
     def task(self):
@@ -192,6 +194,7 @@ class ThreadClient():
                 popen2 = subprocess.Popen(self.gui.cmd, stdout=subprocess.PIPE)
                 self.get_cmdoutput(popen2)
                 popen2.communicate()
+
 
 
     def get_cmdoutput(self,popen):
