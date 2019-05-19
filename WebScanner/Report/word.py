@@ -48,8 +48,8 @@ class GenerateReport(object):
         self.setGraph((0,0,midumvulnnum,highvulnnum,urgentvulnnum),piechartdata)
         self.setVulnlist(vulnnum,vulninfo)
 
-        path = '../reporttmp/'
-        self.document.save(path + fname)
+        # path = '../reporttmp/'
+        # self.document.save(path + fname)
 
 
     def setTitle(self, titlestr):
@@ -168,11 +168,9 @@ class GenerateReport(object):
 
             vulnnum = vulnnum - 1
 
-        # for item in recordset:
-        #     row_cells = table.add_row().cells
-        #     row_cells[0].text = str(item.qty)
-        #     row_cells[1].text = str(item.id)
-        #     row_cells[2].text = item.desc
+
+    def savefile(self,fname):
+        self.document.save(fname)
 
 
 def get_title(url):
@@ -207,13 +205,13 @@ def main(url,scantime,scanurlnum):
 
     vulninfo = sql.getAllVuln_url()
 
-    GenerateReport(
+    doc = GenerateReport(
         sitename=sitename, vulnnum=vulnnum, urgentvulnnum=urgentvulnnum, highvulnnum=highvulnnum, midumvulnnum=midumvulnnum,
         sitedomain=sitedomain, scantime=scantime, scanurlnum=scanurlnum,
         piechartdata=piechartdata,
         vulninfo = vulninfo,
         )
-
+    return doc
 
 
 

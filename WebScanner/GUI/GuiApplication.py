@@ -8,6 +8,7 @@ import tkinter as tk
 import tkinter.font as tkFont
 import tkinter.ttk as ttk
 from tkinter import messagebox
+from tkinter.filedialog import asksaveasfilename
 #-----------------------------------------------
 #内部包导入
 from WebScanner.GUI import Verify
@@ -285,5 +286,11 @@ class MForm(tk.Frame):
         self.getResultlist()
         if messagebox.askyesno(title='获取扫描报告', message='是否生成报告？"'):
             # time.sleep(1)
-            word.main(self.tgtEntry.get(),scantime='5分钟',scanurlnum=51)
-            messagebox.showinfo(title='获取报告',message = '请在webscanner的reporttmp目录下面查看report.docx文档')
+
+            # messagebox.showinfo(title='获取报告',message = '请在webscanner的reporttmp目录下面查看report.docx文档')
+            root = tk.Tk()  # 创建一个Tkinter.Tk()实例
+            root.withdraw()  # 将Tkinter.Tk()实例隐藏
+            fname = asksaveasfilename(title=u'保存文件',filetypes=[("DOCX",".docx")])
+            # picture = piechart_pic.make_piechartpng((1, 5, 3, 1))
+            wordfile = word.main(self.tgtEntry.get(), scantime='5分钟', scanurlnum=51)
+            wordfile.savefile(str(fname) + '.docx')
