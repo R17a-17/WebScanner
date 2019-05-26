@@ -115,7 +115,6 @@ class ThreadClient():
                     stdout=subprocess.PIPE)
                 self.get_cmdoutput(popen)
                 popen.communicate()
-                # os.system('scrapy crawl LinkSpider -a start_url=' + self.gui.tgtEntry.get())
                 self.gui.Resultlist.insert(tk.END, "正在爬取目标网页\n")
                 popen1 = subprocess.Popen('scrapy crawl LinkSpider -a start_url=' + self.gui.tgtEntry.get(),
                     stdout=subprocess.PIPE)

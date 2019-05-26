@@ -1108,84 +1108,116 @@
       <DefaultForCharset>0</DefaultForCharset>
     </collation>
     <table id="278" parent="7" name="t_link_tmp"/>
-    <table id="279" parent="7" name="t_vulninfo"/>
-    <view id="280" parent="7" name="linkview">
-      <SourceTextLength>80</SourceTextLength>
-      <Definer>root@localhost</Definer>
-    </view>
-    <column id="281" parent="278" name="id">
+    <table id="279" parent="7" name="t_vuln_patterncode"/>
+    <table id="280" parent="7" name="t_vuln_suggesstion"/>
+    <table id="281" parent="7" name="t_vuln_url"/>
+    <column id="282" parent="278" name="id">
       <Position>1</Position>
       <DataType>int(10)|0s</DataType>
       <NotNull>1</NotNull>
       <SequenceIdentity>1</SequenceIdentity>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="282" parent="278" name="link">
+    <column id="283" parent="278" name="link">
       <Position>2</Position>
       <DataType>varchar(256)|0s</DataType>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <index id="283" parent="278" name="link">
-      <ColNames>link</ColNames>
-      <Unique>1</Unique>
-      <Type>btree</Type>
-    </index>
     <key id="284" parent="278" name="PRIMARY">
       <NameSurrogate>1</NameSurrogate>
       <ColNames>id</ColNames>
       <Primary>1</Primary>
     </key>
-    <key id="285" parent="278" name="link">
-      <ColNames>link</ColNames>
-      <UnderlyingIndexName>link</UnderlyingIndexName>
-    </key>
-    <column id="286" parent="279" name="id">
+    <column id="285" parent="279" name="id">
       <Position>1</Position>
       <DataType>int(10)|0s</DataType>
       <NotNull>1</NotNull>
       <SequenceIdentity>1</SequenceIdentity>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="287" parent="279" name="vulnurl">
+    <column id="286" parent="279" name="vulntype">
       <Position>2</Position>
       <DataType>varchar(256)|0s</DataType>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="288" parent="279" name="vulntype">
+    <column id="287" parent="279" name="requestcode">
       <Position>3</Position>
       <DataType>varchar(256)|0s</DataType>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="289" parent="279" name="vulnlevel">
+    <column id="288" parent="279" name="responsecode">
       <Position>4</Position>
       <DataType>varchar(256)|0s</DataType>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="290" parent="279" name="vulnaffection">
+    <key id="289" parent="279" name="PRIMARY">
+      <NameSurrogate>1</NameSurrogate>
+      <ColNames>id</ColNames>
+      <Primary>1</Primary>
+    </key>
+    <column id="290" parent="280" name="id">
+      <Position>1</Position>
+      <DataType>int(10)|0s</DataType>
+      <NotNull>1</NotNull>
+      <SequenceIdentity>1</SequenceIdentity>
+      <ColumnKind>normal</ColumnKind>
+    </column>
+    <column id="291" parent="280" name="vulntype">
+      <Position>2</Position>
+      <DataType>varchar(256)|0s</DataType>
+      <NotNull>1</NotNull>
+      <ColumnKind>normal</ColumnKind>
+    </column>
+    <column id="292" parent="280" name="vulnlevel">
+      <Position>3</Position>
+      <DataType>varchar(20)|0s</DataType>
+      <NotNull>1</NotNull>
+      <ColumnKind>normal</ColumnKind>
+    </column>
+    <column id="293" parent="280" name="vulnaffection">
+      <Position>4</Position>
+      <DataType>text|0s</DataType>
+      <NotNull>1</NotNull>
+      <ColumnKind>normal</ColumnKind>
+    </column>
+    <column id="294" parent="280" name="vulnsuggestion">
       <Position>5</Position>
       <DataType>text|0s</DataType>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="291" parent="279" name="vulnsuggestion">
-      <Position>6</Position>
-      <DataType>text|0s</DataType>
-      <NotNull>1</NotNull>
-      <ColumnKind>normal</ColumnKind>
-    </column>
-    <key id="292" parent="279" name="PRIMARY">
+    <key id="295" parent="280" name="PRIMARY">
       <NameSurrogate>1</NameSurrogate>
       <ColNames>id</ColNames>
       <Primary>1</Primary>
     </key>
-    <column id="293" parent="280" name="link">
+    <column id="296" parent="281" name="id">
       <Position>1</Position>
+      <DataType>int(10)|0s</DataType>
+      <NotNull>1</NotNull>
+      <SequenceIdentity>1</SequenceIdentity>
+      <ColumnKind>normal</ColumnKind>
+    </column>
+    <column id="297" parent="281" name="vulnurl">
+      <Position>2</Position>
       <DataType>varchar(256)|0s</DataType>
       <NotNull>1</NotNull>
+      <ColumnKind>normal</ColumnKind>
     </column>
+    <column id="298" parent="281" name="vulntype">
+      <Position>3</Position>
+      <DataType>varchar(256)|0s</DataType>
+      <NotNull>1</NotNull>
+      <ColumnKind>normal</ColumnKind>
+    </column>
+    <key id="299" parent="281" name="PRIMARY">
+      <NameSurrogate>1</NameSurrogate>
+      <ColNames>id</ColNames>
+      <Primary>1</Primary>
+    </key>
   </database-model>
 </dataSource>

@@ -7,12 +7,16 @@ from pymysql import *
 import re
 from scrapy.conf import settings
 import random
+from WebScanner.items_crlf import CrlfItem
 
 
 class CRLF_Spider(Spider):
     '''针对每个页面做出http响应头拆分探测特征码请求，然后根据响应包进行响应包特征码的探测'''
 
     name = 'CRLFSpider'
+    custom_settings = {
+        'ITEM_PIPELINES': {'WebScanner.pipelines_mysqldb_crlfvulninfo.CrlfPipeline': 300,}
+    }
 
     def __init__(self):
         self.linkth = 1
@@ -40,6 +44,10 @@ class CRLF_Spider(Spider):
         else:
             if self.crlf_check(response.headers):
                 print('>>>crlf')
+                crlfitem = CrlfItem()
+                crlfitem['vulnurl'] = self.url
+                crlfitem['vulntype'] = 'CRLF'
+                yield crlfitem
             else:
                 print('>>>no crlf')
 

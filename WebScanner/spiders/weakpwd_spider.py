@@ -41,7 +41,6 @@ class Weakpwd_Spider(Spider):
         self.password = self.pass_list[self.passth]
         #根据表单属性等获取fromdata
         formlist = self.form_find(str(response.body))
-        print(formlist)
         if formlist == None:
             print("未探测到登录表单！")
             return
@@ -70,7 +69,7 @@ class Weakpwd_Spider(Spider):
             yield Request(self.start_urls[0], callback=self.parse, dont_filter = True)
         else:
             str ='>>>Login success!!!username:'+ self.username + ',password:' + self.password
-            string = 'Weak Password:the username is ' + self.username + ' and the password:'+self.password
+            string = 'Weak Password:the username is ' + self.username + ' and the password is'+self.password
             print(str)
             # # dumps 将数据转换成字符串
             # json_str = json.dumps(self.formdata)
@@ -79,12 +78,12 @@ class Weakpwd_Spider(Spider):
             # 将得到的Connection对象和Cursor对象分别赋值给self.db_conn和self.db_cur，以便之后使用。
             db_conn = connect(host='localhost', port=3306, db='webscanner', user='root', passwd='toor', charset='utf8')
             db_cur = db_conn.cursor()
+            sql1 = 'select '
             values = (
                 self.start_urls[0],
                 string,
-                '高危'
             )
-            sql = 'INSERT INTO t_vulninfo(vulnurl, vulntype) VALUES (%s,%s,%s)'
+            sql = 'INSERT INTO t_vuln_url(vulnurl, vulntype) VALUES (%s,%s)'
             # sql = 'INSERT INTO t_link_tmp(link) SELECT %s FROM DUAL WHERE NOT EXISTS(SELECT link from t_link_tmp where link = %s)'
             db_cur.execute(sql,values)
             db_conn.commit()
@@ -133,7 +132,7 @@ class Weakpwd_Spider(Spider):
                 if 'value' in q.group().lower():
                     for r in re.finditer(r'value="(?P<loginvalue>[^ ]+)"( )?', q.group()):
                         loginbutton_value = 'login'
-        print('0000000000000000000000000',action, method, username_parameter,username_value, password_parameter,password_value, loginbutton_parameter,loginbutton_value)
+
         return action, method, username_parameter,username_value, password_parameter,password_value, loginbutton_parameter,loginbutton_value
 
 def main(url):

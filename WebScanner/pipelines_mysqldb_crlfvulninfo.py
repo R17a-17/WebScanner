@@ -9,9 +9,9 @@
 
 from twisted.enterprise import adbapi
 import pymysql
-from WebScanner.items_xss import XssItem
+from WebScanner.items_crlf import CrlfItem
 
-class XssPipeline:
+class CrlfPipeline:
     '''处理linkitem的链接，将所有爬取到的链接插入数据库'''
     def open_spider(self, spider):
         ''' adbapi.ConnectionPool方法可以创建一个数据库连接池对象，其中包含多个连接对象，

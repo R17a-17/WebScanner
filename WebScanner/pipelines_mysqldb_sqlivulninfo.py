@@ -44,9 +44,8 @@ class SqliPipeline:
         values = (
             item['vulnurl'],
             item['vulntype'],
-            '紧急'
         )
-        sql = 'INSERT INTO t_vulninfo(vulnurl, vulntype, vulnlevel) VALUES (%s,%s,%s)'
+        sql = 'INSERT INTO t_vuln_url(vulnurl, vulntype) VALUES (%s,%s)'
         # sql = 'INSERT INTO t_link_tmp(link) SELECT %s FROM DUAL WHERE NOT EXISTS(SELECT link from t_link_tmp where link = %s)'
         try:
             tx.execute(sql,values)

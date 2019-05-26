@@ -12,7 +12,7 @@ class GetVuln(object):
 
     def getXssVuln_url(self):
         '''获取xss信息'''
-        sql = 'select vulntype,vulnurl,vulnlevel,vulnaffection,vulnsuggestion from t_vulninfo where vulntype like "XSS%"'
+        sql = 'select vulntype,vulnurl from t_vuln_url where vulntype like "XSS%"'
         # sql = 'INSERT INTO t_link_tmp(link) SELECT %s FROM DUAL WHERE NOT EXISTS(SELECT link from t_link_tmp where link = %s)'
         self.db_cur.execute(sql)
         try:
@@ -26,7 +26,7 @@ class GetVuln(object):
 
     def getSqliVuln_url(self):
         '''获取sqli信息'''
-        sql = 'select vulntype,vulnurl,vulnlevel,vulnaffection,vulnsuggestion from t_vulninfo where vulntype linke "SQLI%"'
+        sql = 'select vulntype,vulnurl from t_vuln_url where vulntype linke "SQLI%"'
         # sql = 'INSERT INTO t_link_tmp(link) SELECT %s FROM DUAL WHERE NOT EXISTS(SELECT link from t_link_tmp where link = %s)'
         self.db_cur.execute(sql)
         try:
@@ -40,7 +40,7 @@ class GetVuln(object):
 
     def getCrlfVuln_url(self):
         '''获取sqli信息'''
-        sql = 'select vulntype,vulnurl,vulnlevel,vulnaffection,vulnsuggestion from t_vulninfo where vulntype linke "CRLF%"'
+        sql = 'select vulntype,vulnurl from t_vuln_url where vulntype linke "CRLF%"'
         # sql = 'INSERT INTO t_link_tmp(link) SELECT %s FROM DUAL WHERE NOT EXISTS(SELECT link from t_link_tmp where link = %s)'
         self.db_cur.execute(sql)
         try:
@@ -54,7 +54,7 @@ class GetVuln(object):
 
     def getWeakpwdVuln_url(self):
         '''获取sqli信息'''
-        sql = 'select vulntype,vulnurl,vulnlevel,vulnaffection,vulnsuggestion from t_vulninfo where vulntype linke "Weak Password%"'
+        sql = 'select vulntype,vulnurl from t_vuln_url where vulntype linke "Weak Password%"'
         # sql = 'INSERT INTO t_link_tmp(link) SELECT %s FROM DUAL WHERE NOT EXISTS(SELECT link from t_link_tmp where link = %s)'
         self.db_cur.execute(sql)
         try:
@@ -69,7 +69,7 @@ class GetVuln(object):
     def getAllVuln_url(self):
         '''获取sqli信息'''
         allinfo = []
-        sql = 'select vulntype,vulnurl,vulnlevel,vulnaffection,vulnsuggestion from t_vulninfo'
+        sql = 'select vulntype,vulnurl from t_vuln_url'
         # sql = 'INSERT INTO t_link_tmp(link) SELECT %s FROM DUAL WHERE NOT EXISTS(SELECT link from t_link_tmp where link = %s)'
         self.db_cur.execute(sql)
         try:
@@ -77,17 +77,24 @@ class GetVuln(object):
             for vuln in result:
                 alltype = vuln[0]
                 allurl = vuln[1]
-                alllevel = vuln[2]
-                allaffection = vuln[3]
-                allsuggestion = vuln[4]
+                print(alltype)
+                try:
+                    type = alltype.split(':')[0]
+                except:
+                    type = alltype
+                vulninfo = self.getVuln_suggestion(type)
+                alllevel = vulninfo['vulnlevel']
+                allaffection = vulninfo['vulnaffection']
+                allsuggestion = vulninfo['vulnsuggestion']
                 allinfo.append({'vulntype':alltype, 'vulnurl':allurl, 'vulnlevel':alllevel, 'vulnaffection':allaffection,'vulnsuggestion':allsuggestion})
+                print(allinfo)
         except:
             allinfo = None
         return allinfo
 
     def getXssVuln_num(self):
         '''获取xss信息'''
-        sql = 'select count(*) from t_vulninfo where vulntype like "XSS%"'
+        sql = 'select count(*) from t_vuln_url where vulntype like "XSS%"'
         # sql = 'INSERT INTO t_link_tmp(link) SELECT %s FROM DUAL WHERE NOT EXISTS(SELECT link from t_link_tmp where link = %s)'
         self.db_cur.execute(sql)
         try:
@@ -98,7 +105,7 @@ class GetVuln(object):
 
     def getSqliVuln_num(self):
         '''获取sqli漏洞数量'''
-        sql = 'select count(*) from t_vulninfo where vulntype like "SQLI%"'
+        sql = 'select count(*) from t_vuln_url where vulntype like "SQLI%"'
         # sql = 'INSERT INTO t_link_tmp(link) SELECT %s FROM DUAL WHERE NOT EXISTS(SELECT link from t_link_tmp where link = %s)'
         self.db_cur.execute(sql)
         try:
@@ -109,7 +116,7 @@ class GetVuln(object):
 
     def getCrlfVuln_num(self):
         '''获取sqli漏洞数量'''
-        sql = 'select count(*) from t_vulninfo where vulntype like "CRLF%"'
+        sql = 'select count(*) from t_vuln_url where vulntype like "CRLF%"'
         # sql = 'INSERT INTO t_link_tmp(link) SELECT %s FROM DUAL WHERE NOT EXISTS(SELECT link from t_link_tmp where link = %s)'
         self.db_cur.execute(sql)
         try:
@@ -120,7 +127,7 @@ class GetVuln(object):
 
     def getWeakpwdVuln_num(self):
         '''获取sqli漏洞数量'''
-        sql = 'select count(*) from t_vulninfo where vulntype like "Weak Password%"'
+        sql = 'select count(*) from t_vuln_url where vulntype like "Weak Password%"'
         # sql = 'INSERT INTO t_link_tmp(link) SELECT %s FROM DUAL WHERE NOT EXISTS(SELECT link from t_link_tmp where link = %s)'
         self.db_cur.execute(sql)
         try:
@@ -131,7 +138,7 @@ class GetVuln(object):
 
     def getAllVuln_num(self):
         '''获取XSS漏洞数量'''
-        sql = 'select count(*) from t_vulninfo'
+        sql = 'select count(*) from t_vuln_url'
         # sql = 'INSERT INTO t_link_tmp(link) SELECT %s FROM DUAL WHERE NOT EXISTS(SELECT link from t_link_tmp where link = %s)'
         self.db_cur.execute(sql)
         try:
@@ -139,3 +146,25 @@ class GetVuln(object):
         except:
             allnum = 0
         return allnum
+
+    def getVuln_suggestion(self,type):
+        '''获取漏洞危害和修复建议'''
+        likestr = type + '%'
+        sql = 'select * from t_vuln_suggesstion where vulntype like %s'
+        self.db_cur.execute(sql,likestr)
+        vulninfo = []
+        vulnfet = self.db_cur.fetchall()
+        print(vulnfet)
+        for vuln in vulnfet:
+            vulnlevel = vuln[2]
+            vulnaffection = vuln[3]
+            vulnsuggestion = vuln[4]
+            vulninfo.append(
+                { 'vulnlevel':vulnlevel, 'vulnaffection': vulnaffection,'vulnsuggestion': vulnsuggestion}
+            )
+        print(vulninfo)
+        return vulninfo
+
+if __name__ == '__main__':
+    sql = GetVuln()
+    sql.getAllVuln_url()
