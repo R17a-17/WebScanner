@@ -270,6 +270,7 @@ class MForm(tk.Frame):
             for info in allvulninfo:
                 self.Resultlist.insert(tk.END,info['vulntype'] + ':\n' + info['vulnurl'] + '\n'+
                                        info['vulnlevel']+'\n'+ info['vulnaffection']+'\n'+ info['vulnsuggestion'] + '\n\n')
+                self.Resultlist.insert(tk.END,'>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>')
         else:
             self.Resultlist.insert(tk.END, '您的网站不存在SQL注入、弱口令、XSS、CRLF漏洞\n')
 

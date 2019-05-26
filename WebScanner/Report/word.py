@@ -66,7 +66,7 @@ class GenerateReport(object):
     def setSummaryPart(self,sitename,vulnnum, urgentvulnnum, highvulnnum, midumvulnnum, sitedomain, scantime, scanurlnum):
         '''设置概况部分'''
         # 一、网站概况
-        summary_titlestr = '一、网站概况'
+        summary_titlestr = '一、网站扫描概况'
         summary_title = self.document.add_heading('', level=2)
         summary_titele_run = summary_title.add_run(summary_titlestr)
         summary_titele_run.font.name = u'宋体'
@@ -139,13 +139,6 @@ class GenerateReport(object):
         titele_run.bold = True  # 加粗
         titele_run.font.size = Pt(sec_title_size)
         titele_run._element.rPr.rFonts.set(qn('w:eastAsia'), u'宋体')
-
-        #生成列表
-        # 漏洞类型： XSS
-        # 漏洞等级：高危
-        # 漏洞url：http://xxx/UploadFile/picture/
-        # 漏洞危害：XXXXXXXXXXXXX
-        # 修复建议：XXXXXXXXXXX
 
         while vulnnum > 0:
             self.document.add_paragraph('                     \n')

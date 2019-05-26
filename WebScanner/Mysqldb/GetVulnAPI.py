@@ -77,17 +77,15 @@ class GetVuln(object):
             for vuln in result:
                 alltype = vuln[0]
                 allurl = vuln[1]
-                print(alltype)
                 try:
                     type = alltype.split(':')[0]
                 except:
                     type = alltype
                 vulninfo = self.getVuln_suggestion(type)
-                alllevel = vulninfo['vulnlevel']
-                allaffection = vulninfo['vulnaffection']
-                allsuggestion = vulninfo['vulnsuggestion']
+                alllevel = vulninfo[0]['vulnlevel']
+                allaffection = vulninfo[0]['vulnaffection']
+                allsuggestion = vulninfo[0]['vulnsuggestion']
                 allinfo.append({'vulntype':alltype, 'vulnurl':allurl, 'vulnlevel':alllevel, 'vulnaffection':allaffection,'vulnsuggestion':allsuggestion})
-                print(allinfo)
         except:
             allinfo = None
         return allinfo
@@ -154,7 +152,6 @@ class GetVuln(object):
         self.db_cur.execute(sql,likestr)
         vulninfo = []
         vulnfet = self.db_cur.fetchall()
-        print(vulnfet)
         for vuln in vulnfet:
             vulnlevel = vuln[2]
             vulnaffection = vuln[3]
@@ -162,7 +159,6 @@ class GetVuln(object):
             vulninfo.append(
                 { 'vulnlevel':vulnlevel, 'vulnaffection': vulnaffection,'vulnsuggestion': vulnsuggestion}
             )
-        print(vulninfo)
         return vulninfo
 
 if __name__ == '__main__':
